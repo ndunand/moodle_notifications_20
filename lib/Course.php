@@ -30,11 +30,11 @@ class Course {
 		$course->id = $this->get_registration_id($course_id);
 		$course->course_id = $course_id;
 		$course->notify_by_email = 0;
-		if(isset($settings->notify_by_email)) $course->notify_by_email = 1;
+		if(isset($settings->notify_by_email) and $settings->notify_by_email == 1) $course->notify_by_email = 1;
 		$course->notify_by_sms = 0;
-		if(isset($settings->notify_by_sms)) $course->notify_by_sms = 1;
+		if(isset($settings->notify_by_sms) and $settings->notify_by_sms == 1) $course->notify_by_sms = 1;
 		$course->notify_by_rss = 0;
-		if(isset($settings->notify_by_rss)) $course->notify_by_rss = 1;
+		if(isset($settings->notify_by_rss) and $settings->notify_by_rss == 1) $course->notify_by_rss = 1;
 		return $DB->update_record('block_notify_changes_courses', $course);
 	}
 

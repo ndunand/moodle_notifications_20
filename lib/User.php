@@ -4,11 +4,21 @@
 //***************************************************	
 
 class User {
-
+/*
 	function get_all_users_enrolled_in_the_course($course_id) {
 		$context = get_context_instance(CONTEXT_COURSE, $course_id);
 		$students = get_users_by_capability($context, 'mod/assignment:submit', 'u.id, u.firstname, u.lastname, u.email, u.mailformat');
 		return $students;
+	}
+*/
+	function get_all_users_enrolled_in_the_course($course_id) {
+		$context = get_context_instance(CONTEXT_COURSE, $course_id);
+		$all_users = get_users_by_capability($context, 'mod/assignment:view', 'u.id, u.firstname, u.lastname, u.email, u.mailformat', 'lastname ASC, firstname DESC', '', '', '');
+		$advanced_users = get_users_by_capability($context, 'moodle/course:create', 'u.id', 'lastname ASC, firstname DESC', '', '', '');
+		// filter advanced users: administrators
+		foreach($advanced_users as $key => $value)
+			unset($all_users[$key]);
+		return $all_users;
 	}
 
 	// this function initializes the global user preferences for the current course

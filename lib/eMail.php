@@ -9,6 +9,7 @@ class eMail {
 		$text_message = $this->text_mail($changelist, $course);
 		$subject = get_string('mailsubject', 'block_notify_changes');
 		$subject.= ": ".format_string($course->fullname, true);
+		//$subject.= ": lastname ".format_string($user->lastname, true);
 		return email_to_user($user, '', $subject, $text_message, $html_message);
 	}
 

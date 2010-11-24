@@ -11,7 +11,6 @@ class block_notify_changes extends block_base {
 //***************************************************	
 	function init() {
 		$this->title = get_string('pluginname', 'block_notify_changes'); 
-		$this->cron = 1;
 	}
 
 //***************************************************	s
@@ -30,7 +29,8 @@ class block_notify_changes extends block_base {
 	function instance_allow_config() {
 		return true; 
 	}
-	function instance_config_save($data) {
+
+	function instance_config_save($data, $nolongerused = false) {
 		global $COURSE;
 		$Course = new Course();
 		$Course->update_course_notification_settings($COURSE->id, $data);
@@ -115,7 +115,6 @@ class block_notify_changes extends block_base {
 			if ( $course_registration->notify_by_email == 1 ) {
 				$this->content->text.= "<img src='$CFG->wwwroot/blocks/notify_changes/images/Mail-icon.png' alt='Notification by mail' />";
 			} 
-			
 			if ( $course_registration->notify_by_sms == 1 ) {
 				$this->content->text.= "<img src='$CFG->wwwroot/blocks/notify_changes/images/SMS-icon.png' alt='Notification by sms' />";
 			}
@@ -125,10 +124,7 @@ class block_notify_changes extends block_base {
 		}
 
 		$this->content->text.= $this->personal_settings($course_registration);
-		/*
-		*/
 		$this->content->footer = '';
-		$this->cron();
 		return $this->content;
 	}
  
@@ -140,7 +136,7 @@ class block_notify_changes extends block_base {
 		$Course = new Course();
 		$courses = $Course->get_all_courses_using_notify_changes_block();
 		if( !is_array($courses) or count($courses) < 1 ) return;
-		
+			
 		foreach($courses as $course){
 			// check if the course has something new or not
 			$changelist = $Course->get_recent_activities($course); 
