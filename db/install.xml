@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/notify_changes/db" VERSION="20101029" COMMENT="XMLDB file for Moodle blocks/notify_changes"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="block_notify_changes_courses" COMMENT="Timestamps from courses" NEXT="block_notify_changes_users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course_id"/>
+        <FIELD NAME="course_id" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="The course identificator" PREVIOUS="id" NEXT="last_notification_time"/>
+        <FIELD NAME="last_notification_time" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="The last time the notification has been sent" PREVIOUS="course_id" NEXT="notify_by_email"/>
+        <FIELD NAME="notify_by_email" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables notification by email" PREVIOUS="last_notification_time" NEXT="notify_by_sms"/>
+        <FIELD NAME="notify_by_sms" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables notification by sms" PREVIOUS="notify_by_email" NEXT="notify_by_rss"/>
+        <FIELD NAME="notify_by_rss" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables RSS notification" PREVIOUS="notify_by_sms"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="block_notify_changes_users" COMMENT="This table contains user preferences" PREVIOUS="block_notify_changes_courses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="user_id"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="User id" PREVIOUS="id" NEXT="course_id"/>
+        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Course id" PREVIOUS="user_id" NEXT="notify_by_email"/>
+        <FIELD NAME="notify_by_email" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables mail notification. 1-enabled 0-disabled" PREVIOUS="course_id" NEXT="notify_by_sms"/>
+        <FIELD NAME="notify_by_sms" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables sms notification. 1-enabled 0-disabled" PREVIOUS="notify_by_email"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
