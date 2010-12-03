@@ -71,6 +71,7 @@ class Course {
 			return null;
 	}
 
+	/*
 	function get_recent_activities($course) {
 		global $DB;
 		// module information for the current course
@@ -148,14 +149,116 @@ class Course {
 		else 
 			return null;
 	}
+	*/
 
 	function get_all_courses_using_notify_changes_block(){
-		global $DB;
+		global $DB, $CFG;
 		// join block_instances, context and course and extract all courses
 		// that are using notify_changes block
-		return $DB->get_records_sql(" select * from course where id in 
-											( select instanceid from context where id in 
-												( select parentcontextid from block_instances where blockname = 'notify_changes' ) );");
+		return $DB->get_records_sql(" select * from {$CFG->prefix}course where id in 
+											( select instanceid from {$CFG->prefix}context where id in 
+												( select parentcontextid from {$CFG->prefix}block_instances where blockname = 'notify_changes' ) );");
+	}
+	
+	function get_updated_and_deleted_modules($course_id){
+		global $DB;
+		// join block_instance, block and course and extract all courses
+		// that are using notify_changes block
+		$last_notification_time = $this->get_last_notification_time($course_id);
+		$this->update_last_notification_time($course_id, time());
+		return $DB->get_records_select('log', "course=$course_id and action in ('update', 'delete mod') and time > $last_notification_time", null,'cmid,action');
+	}
+
+
+
+	function update_log($course){
+		global $DB;
+		$modinfo =& get_fast_modinfo($course);
+		foreach($modinfo->cms as $cms => $module){
+			// filter labels
+			if($module->modname == 'label' or $this->is_module_logged($course->id, $module->id, $module->modname)) continue;
+			$new_record = new Object();
+			$new_record->course_id = $course->id;
+			$new_record->module_id = $module->id;
+			$new_record->name = $module->name;
+			$new_record->type = $module->modname;
+			$new_record->action = 'added';
+			$new_record->status = 'pending';
+			// if the resource is not visible than
+			// mark it as pending and then notify once it is made visible
+			$DB->insert_record('block_notify_changes_log', $new_record);
+		}
+		// update records
+		$course_updates = $this->get_updated_and_deleted_modules($course->id);
+		foreach($course_updates as $course_update){
+			$log_row = $this->get_log_entry($course_update->cmid);
+			if($course_update->action == 'update'){
+				$log_row->action = 'updated';
+				// set new name if name has been changed
+				$log_row->name = $modinfo->cms[$log_row->module_id]->name;
+				$log_row->status = 'pending';
+			} else if($course_update->action == 'delete mod') {
+				$log_row->action = 'deleted';
+				$log_row->status = 'pending';
+			}
+			$DB->update_record('block_notify_changes_log', $log_row);
+		}
+		
+	}
+
+	function initialize_log($course){
+		global $DB;
+		$modinfo =& get_fast_modinfo($course);
+		// drop all previous records
+		$DB->delete_records('block_notify_changes_log', array('course_id'=>$course->id) );
+		// add new records
+		foreach($modinfo->cms as $cms => $module){
+			// filter labels
+			if( $module->modname == 'label') continue;
+			$new_record = new Object();
+			$new_record->course_id = $course->id;
+			$new_record->module_id = $module->id;
+			$new_record->name = $module->name;
+			$new_record->type = $module->modname;
+			$new_record->action = 'added';
+			$new_record->status = 'notified';
+			// if the resource is not visible than
+			// mark it as pending and then notify once it is made visible
+			if($module->visible == '0') $new_record->status = 'pending';
+			$DB->insert_record('block_notify_changes_log', $new_record);
+		}
+	}
+
+	function is_module_logged($course_id, $module_id, $type){
+		global $DB;
+		$log = $DB->get_records_select('block_notify_changes_log', "course_id = $course_id AND module_id = $module_id AND type = '$type'", null,'id');
+		if(empty($log))
+			return false;
+		else
+			return true;
+	}
+
+	function log_exists($course_id){
+		global $DB;
+		$log = $DB->get_records_select('block_notify_changes_log', "course_id = $course_id", null,'id');
+		if(empty($log))
+			return false;
+		else
+			return true;
+	}
+
+	function get_log_entry($module_id){
+		global $DB, $CFG;
+		return current( $DB->get_records_select('block_notify_changes_log', "module_id = $module_id") );
+	}
+
+	function get_recent_activities($course_id){
+		global $DB, $CFG;
+		$recent_activities = $DB->get_records_select('block_notify_changes_log', "course_id = $course_id AND status='pending'");
+		// clear all pending notifications
+		if( !empty($recent_activities) )
+			$DB->execute("update {$CFG->prefix}block_notify_changes_log set status = 'notified' where course_id = $course_id and status='pending'");
+		return $recent_activities;
 	}
 }
 ?>
