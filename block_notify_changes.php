@@ -3,6 +3,7 @@ include_once realpath(dirname( __FILE__ ).DIRECTORY_SEPARATOR).DIRECTORY_SEPARAT
 include_once LIB_DIR.DIRECTORY_SEPARATOR."User.php";
 include_once LIB_DIR.DIRECTORY_SEPARATOR."Course.php";
 include_once LIB_DIR.DIRECTORY_SEPARATOR."eMail.php";
+include_once LIB_DIR.DIRECTORY_SEPARATOR."SMS.php";
 
 class block_notify_changes extends block_base {
 
@@ -110,7 +111,9 @@ class block_notify_changes extends block_base {
 		$this->content   = new stdClass;
 		$Course = new Course();
 		$course_registration = $Course->get_registration($COURSE->id);
-
+		//print_r($Course->get_recent_activities($COURSE->id));
+		//$User = new User();
+		//print_r($User->get_all_users_enrolled_in_the_course($COURSE->id));
 		if ( $course_registration->notify_by_email == 0 and $course_registration->notify_by_sms == 0 and $course_registration->notify_by_rss == 0  )
 			$this->content->text =  get_string('configuration_comment', 'block_notify_changes');
 		else {
@@ -135,51 +138,8 @@ class block_notify_changes extends block_base {
 //***************************************************	
 // Cron
 //***************************************************	
-/*
-	function cron(){
-		// get the list of courses that are using 
-		$Course = new Course();
-		$courses = $Course->get_all_courses_using_notify_changes_block();
-		if( !is_array($courses) or count($courses) < 1 ) return;
-			
-		foreach($courses as $course){
-			// check if the course has something new or not
-			$changelist = $Course->get_recent_activities($course); 
-			if( empty($changelist) ) continue; // check the next course. No new items in this one.
 
-			// get list of users enrolled in this course
-			$User = new User();
-			$enrolled_users = $User->get_all_users_enrolled_in_the_course($course->id);
-			$course_registration = $Course->get_registration($course->id);
-			foreach($enrolled_users as $user){
-				// check if the user has preferences	
-				$user_preferences = $User->get_preferences($user->id, $course->id);
-				// if the user has not preferences than set the default
-				if(is_null($user_preferences)){
-					$user_preferences = new Object();	
-					$user_preferences->user_id = $user->id;
-					$user_preferences->course_id = $course->id;
-					$user_preferences->notify_by_email = 1;
-					$user_preferences->notify_by_sms = 1;
-					$User->initialize_preferences(	$user_preferences->user_id, 
-													$user_preferences->course_id, 
-													$user_preferences->notify_by_email, 
-													$user_preferences->notify_by_sms );
-				}
-
-				// if the email notification is enabled in the course
-				// and if the user has set the emailing notification in preferences
-				// then send a notification by email
-				if( $course_registration->notify_by_email == 1 and $user_preferences->notify_by_email == 1 ){
-					$eMail = new eMail();
-					$eMail->notify_changes($changelist, $user, $course);
-				}
-			}
-		}
-		return;
-	}
-*/
-	function cron(){
+function cron(){
 		//$Course->initialize_log($COURSE);
 		//$Course->update_log($COURSE);
 
@@ -212,9 +172,7 @@ class block_notify_changes extends block_base {
 			$Course->update_log($course);
 
 			// check if the course has something new or not
-			var_dump("change list");
 			$changelist = $Course->get_recent_activities($course->id); 
-			var_dump("end of change list");
 			if( empty($changelist) ) continue; // check the next course. No new items in this one.
 
 			// get list of users enrolled in this course
@@ -243,6 +201,14 @@ class block_notify_changes extends block_base {
 				if( $course_registration->notify_by_email == 1 and $user_preferences->notify_by_email == 1 ) {
 					$eMail = new eMail();
 					$eMail->notify_changes($changelist, $user, $course);
+				}
+				// if the sms notification is enabled in the course
+				// and if the user has set the sms notification in preferences
+				// and if the user has set the mobile phone number 
+				// then send a notification by sms
+				if( $course_registration->notify_by_sms == 1 and $user_preferences->notify_by_sms == 1 and !empty($user->phone2) and is_numeric($user->phone2) ) {
+					$sms = new SMS();
+					$sms->notify_changes($changelist, $user, $course);
 				}
 			}
 		}

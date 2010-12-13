@@ -254,11 +254,20 @@ class Course {
 
 	function get_recent_activities($course_id){
 		global $DB, $CFG;
-		$recent_activities = $DB->get_records_select('block_notify_changes_log', "course_id = $course_id AND status='pending'");
+		//block_notify_changes_log table plus visible field from course_modules
+		$subtable = "( select {$CFG->prefix}block_notify_changes_log.*, {$CFG->prefix}course_modules.visible 
+						from {$CFG->prefix}block_notify_changes_log join {$CFG->prefix}course_modules 
+							on ({$CFG->prefix}block_notify_changes_log.module_id = {$CFG->prefix}course_modules.id) ) logs_with_visibility";
+		// select all modules that are visible and whose status is pending
+		$recent_activities = $DB->get_records_sql("select * from $subtable where course_id = $course_id and status='pending' and visible = 1");
 		// clear all pending notifications
-		if( !empty($recent_activities) )
-			$DB->execute("update {$CFG->prefix}block_notify_changes_log set status = 'notified' where course_id = $course_id and status='pending'");
+		if(!empty($recent_activities))
+			$DB->execute("update {$CFG->prefix}block_notify_changes_log set status = 'notified' 
+								where 
+									course_id = $course_id and status='pending' 
+									and id in ( select id from $subtable where course_id = $course_id and visible = 1)");
 		return $recent_activities;
 	}
+
 }
 ?>
