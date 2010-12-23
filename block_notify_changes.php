@@ -29,6 +29,10 @@ class block_notify_changes extends block_base {
 		if( !$Course->log_exists($COURSE->id) ) 
 			$Course->initialize_log($COURSE);
 
+		// set cron
+		$course_notification_setting = $Course->get_registration($COURSE->id);	
+		$this->cron = $course_notification_setting->notification_frequency;
+
 	}
 
 	function instance_allow_config() {
@@ -126,7 +130,9 @@ class block_notify_changes extends block_base {
 				$this->content->text.= "<img src='$CFG->wwwroot/blocks/notify_changes/images/SMS-icon.png' alt='Notification by sms' />";
 			}
 			if ( $course_registration->notify_by_rss == 1 ) {
+				$this->content->text.= "<a target='_blank' href='$CFG->wwwroot/blocks/notify_changes/lib/RSS.php?id=$COURSE->id'>";
 				$this->content->text.= "<img src='$CFG->wwwroot/blocks/notify_changes/images/RSS-icon.png' alt='Notification by rss' />";
+				$this->content->text.= "</a>";
 			}
 		}
 
@@ -140,9 +146,6 @@ class block_notify_changes extends block_base {
 //***************************************************	
 
 function cron(){
-		//$Course->initialize_log($COURSE);
-		//$Course->update_log($COURSE);
-
 		// get the list of courses that are using this block
 		$Course = new Course();
 		$courses = $Course->get_all_courses_using_notify_changes_block();
@@ -160,11 +163,11 @@ function cron(){
 
 			$last_notification_time = $Course->get_last_notification_time($course->id);
 			// if course log entry does not exist 
-			// or the last notification time is older than two cron cycles
-			// then initialize course log
-			/*
-			if( !$Course->log_exists($course->id) or $last_notification_time + 2*$this->cron < time() ) 
+			// or the last notification time is older than two days 
+			// then reinitialize course log
+			if( !$Course->log_exists($course->id) or $last_notification_time + 48*3600 < time() ) 
 				$Course->initialize_log($course);
+			/*
 			*/
 			// simpler rule for debuging purposes
 			if( !$Course->log_exists($course->id) ) $Course->initialize_log($course);

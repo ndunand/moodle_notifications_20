@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/notify_changes/db" VERSION="20101202" COMMENT="XMLDB file for Moodle blocks/notify_changes"
+<XMLDB PATH="blocks/notify_changes/db" VERSION="20101223" COMMENT="XMLDB file for Moodle blocks/notify_changes"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="block_notify_changes_courses" COMMENT="Timestamps from courses" NEXT="block_notify_changes_log">
+    <TABLE NAME="block_notify_changes_courses" NEXT="block_notify_changes_log" COMMENT="Courses table">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course_id"/>
         <FIELD NAME="course_id" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="The course identificator" PREVIOUS="id" NEXT="last_notification_time"/>
         <FIELD NAME="last_notification_time" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="The last time the notification has been sent" PREVIOUS="course_id" NEXT="notify_by_email"/>
         <FIELD NAME="notify_by_email" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables notification by email" PREVIOUS="last_notification_time" NEXT="notify_by_sms"/>
         <FIELD NAME="notify_by_sms" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables notification by sms" PREVIOUS="notify_by_email" NEXT="notify_by_rss"/>
-        <FIELD NAME="notify_by_rss" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables RSS notification" PREVIOUS="notify_by_sms"/>
+        <FIELD NAME="notify_by_rss" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables RSS notification" PREVIOUS="notify_by_sms" NEXT="notification_frequency"/>
+        <FIELD NAME="notification_frequency" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="43200" SEQUENCE="false" ENUM="false" PREVIOUS="notify_by_rss"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

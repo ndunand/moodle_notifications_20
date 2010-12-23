@@ -35,6 +35,9 @@ class Course {
 		if(isset($settings->notify_by_sms) and $settings->notify_by_sms == 1) $course->notify_by_sms = 1;
 		$course->notify_by_rss = 0;
 		if(isset($settings->notify_by_rss) and $settings->notify_by_rss == 1) $course->notify_by_rss = 1;
+		var_dump($settings);
+		if(isset($settings->notification_frequency))
+			$course->notification_frequency = $settings->notification_frequency % 25 * 3600;
 		return $DB->update_record('block_notify_changes_courses', $course);
 	}
 
@@ -71,85 +74,15 @@ class Course {
 			return null;
 	}
 
-	/*
-	function get_recent_activities($course) {
+	function uses_notify_changes_block($course_id){
 		global $DB;
-		// module information for the current course
-		$modinfo =& get_fast_modinfo($course);
-		$last_notification_time = $this->get_last_notification_time($course->id);
-		$changelist = array();
-		$logs = $DB->get_records_select( 'log', "time > $last_notification_time AND course = $course->id AND module = 'course' AND
-										(action = 'add mod' OR action = 'update mod' OR action = 'delete mod')", null, "id ASC");
-		if ($logs) {
-			$actions  = array('add mod', 'update mod', 'delete mod');
-			$newgones = array(); // added and later deleted items
-			foreach ($logs as $key => $log) {
-				// skip if the log is not about actions
-				if (!in_array($log->action, $actions)) {
-					continue;
-				}
-
-				// remove the space from the info field
-				$info = split(' ', $log->info); 
-				// ignore labels
-				if ($info[0] == 'label') {	  
-					continue;
-				}
-				// if in the info field modname o instance id is missing skip
-				if (count($info) != 2) {
-					debugging("Incorrect log entry info: id = ".$log->id, DEBUG_DEVELOPER);
-					continue;
-				}
-
-				$modname	= $info[0];
-				$instanceid = $info[1];
-
-				if ($log->action == 'delete mod') {
-					// unfortunately we do not know if the mod was visible
-					if (!array_key_exists($log->info, $newgones)) {
-						$strdeleted = get_string('deletedactivity', 'moodle', get_string('modulename', $modname));
-						$changelist[$log->info] = array ('operation' => 'delete', 'text' => $strdeleted);
-					}
-				} else {
-					//var_dump($modinfo);
-					if (!isset($modinfo->instances[$modname][$instanceid])) {
-						if ($log->action == 'add mod') {
-							// do not display added and later deleted activities
-							$newgones[$log->info] = true;
-						 }
-						 continue;
-					 }
-					 $cm = $modinfo->instances[$modname][$instanceid];
-					 if (!$cm->uservisible) {
-						 continue;
-					 }
-					 if ($log->action == 'add mod') {
-						 $stradded = get_string('added', 'moodle', get_string('modulename', $modname));
-						 $changelist[$log->info] = array(	'operation' => $stradded, 
-						 									'modname' => $cm->modname, 
-															'id' => $cm->id, 
-															'resource_name' => format_string($cm->name) );
-
-					 } else if ($log->action == 'update mod' and empty($changelist[$log->info])) {
-						 $strupdated = get_string('updated', 'moodle', get_string('modulename', $modname));
-						 $changelist[$log->info] = array(	'operation' => $strupdated, 
-						 									'modname' => $cm->modname, 
-															'id' => $cm->id, 
-															'resource_name' => format_string($cm->name) );
-					 }
-				}
-			}
-		}
-
-		// update last notification time
-		$this->update_last_notification_time($course->id, time());
-		
-		if (!empty($changelist))
-			return $changelist;
-		else 
-			return null;
+		$id = $DB->get_records_sql("select instanceid from {$CFG->prefix}context where id in (select parentcontextid from {$CFG->prefix}block_instances where blockname = 'notify_changes') and instanceid = $course_id");
+		if(empty($id))
+			return false;
+		else
+			return true;
 	}
-	*/
+
 
 	function get_all_courses_using_notify_changes_block(){
 		global $DB, $CFG;
@@ -162,8 +95,6 @@ class Course {
 	
 	function get_updated_and_deleted_modules($course_id){
 		global $DB;
-		// join block_instance, block and course and extract all courses
-		// that are using notify_changes block
 		$last_notification_time = $this->get_last_notification_time($course_id);
 		$this->update_last_notification_time($course_id, time());
 		return $DB->get_records_select('log', "course=$course_id and action in ('update', 'delete mod') and time > $last_notification_time", null,'cmid,action');
@@ -190,6 +121,10 @@ class Course {
 		}
 		// update records
 		$course_updates = $this->get_updated_and_deleted_modules($course->id);
+
+		// if no course updates available then return 
+		if(empty($course_updates)) return;
+
 		foreach($course_updates as $course_update){
 			$log_row = $this->get_log_entry($course_update->cmid);
 			if($course_update->action == 'update'){
@@ -256,18 +191,25 @@ class Course {
 		global $DB, $CFG;
 		//block_notify_changes_log table plus visible field from course_modules
 		$subtable = "( select {$CFG->prefix}block_notify_changes_log.*, {$CFG->prefix}course_modules.visible 
-						from {$CFG->prefix}block_notify_changes_log join {$CFG->prefix}course_modules 
+						from {$CFG->prefix}block_notify_changes_log left join {$CFG->prefix}course_modules 
 							on ({$CFG->prefix}block_notify_changes_log.module_id = {$CFG->prefix}course_modules.id) ) logs_with_visibility";
 		// select all modules that are visible and whose status is pending
-		$recent_activities = $DB->get_records_sql("select * from $subtable where course_id = $course_id and status='pending' and visible = 1");
+		$recent_activities = $DB->get_records_sql("select * from $subtable where course_id = $course_id and status='pending' and (visible = 1 or visible is null)");
+		print_r($recent_activities);
 		// clear all pending notifications
 		if(!empty($recent_activities))
-			$DB->execute("update {$CFG->prefix}block_notify_changes_log set status = 'notified' 
+			$DB->get_records_sql("update {$CFG->prefix}block_notify_changes_log set status = 'notified' 
 								where 
 									course_id = $course_id and status='pending' 
-									and id in ( select id from $subtable where course_id = $course_id and visible = 1)");
+									and id in ( select id from $subtable where course_id = $course_id and (visible = 1 or visible is null) )");
 		return $recent_activities;
 	}
+
+	function get_course_info($course_id){
+		global $CFG, $DB;
+		return current( $DB->get_records_sql("select fullname, summary from {$CFG->prefix}course where id = $course_id") );
+	}
+
 
 }
 ?>

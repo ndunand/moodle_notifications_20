@@ -14,12 +14,22 @@ class User {
 	function get_all_users_enrolled_in_the_course($course_id) {
 		$context = get_context_instance(CONTEXT_COURSE, $course_id);
 		$all_users = get_users_by_capability($context, 'mod/assignment:view', 'u.id, u.firstname, u.lastname, u.email, u.mailformat, u.phone2', 'lastname ASC, firstname DESC');
-		$advanced_users = get_users_by_capability($context, 'moodle/course:create', 'u.id', 'lastname ASC, firstname DESC', '', '', '');
+		$advanced_users = get_users_by_capability($context, 'moodle/course:create', 'u.id', 'lastname ASC, firstname DESC');
 		// filter advanced users: administrators
 		foreach($advanced_users as $key => $value)
 			unset($all_users[$key]);
 		return $all_users;
 	}
+
+	function get_professor($course_id) {
+		$context = get_context_instance(CONTEXT_COURSE, $course_id);
+		$users = get_users_by_capability($context, 'moodle/course:managegroups', 'u.id, u.firstname, u.lastname, u.email, u.mailformat, u.phone2', 'lastname ASC, firstname DESC');
+		$advanced_users = get_users_by_capability($context, 'moodle/course:create', 'u.id', 'lastname ASC, firstname DESC');
+		foreach($advanced_users as $key => $value)
+			unset($users[$key]);
+		return current($users);
+	}
+
 
 	// this function initializes the global user preferences for the current course
 	// a new user is enrolled in the course that uses notify_changes block 
