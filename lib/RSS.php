@@ -39,7 +39,6 @@ class RSS {
 					<managingEditor>$teacher->email</managingEditor>
 					<webMaster>helpdesk@elearninglab.org</webMaster>";
 
-
 		$moodle_logs = $DB->get_records_sql("select 
 											{$CFG->prefix}log.id, 
 											{$CFG->prefix}block_notify_changes_log.module_id, 
@@ -58,7 +57,7 @@ class RSS {
 
 		foreach($moodle_logs as $log){
 			$output .= "<item>";
-			$output .= "<title>$log->type</title>";
+			$output .= '<title>'.get_string($log->type, 'block_notify_changes').'</title>';
 			if($log->action == 'delete mod')
 				$output .= "<link></link>";
 			else

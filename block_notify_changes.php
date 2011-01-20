@@ -28,11 +28,6 @@ class block_notify_changes extends block_base {
 		// intialize logs; perform this operation just once
 		if( !$Course->log_exists($COURSE->id) ) 
 			$Course->initialize_log($COURSE);
-
-		// set cron
-		$course_notification_setting = $Course->get_registration($COURSE->id);	
-		$this->cron = $course_notification_setting->notification_frequency;
-
 	}
 
 	function instance_allow_config() {
@@ -146,12 +141,16 @@ class block_notify_changes extends block_base {
 //***************************************************	
 
 function cron(){
+		echo "\n\n****** notify_changes :: begin ******";
 		// get the list of courses that are using this block
 		$Course = new Course();
 		$courses = $Course->get_all_courses_using_notify_changes_block();
 
 		// if no courses are using this block exit
-		if( !is_array($courses) or count($courses) < 1 ) return;
+		if( !is_array($courses) or count($courses) < 1 ) {
+			echo "--> None course is using notify_changes plugin.";
+			return;
+		}
 
 		
 		foreach($courses as $course) {
@@ -159,13 +158,22 @@ function cron(){
 			if ( $course->visible == 0 ) continue;
 
 			// if the course has not been registered so far then register
+			echo "\n--> Processing course: $course->fullname";
 			if( !$Course->is_registered($course->id) ) $Course->register($course->id, time());
 
-			$last_notification_time = $Course->get_last_notification_time($course->id);
+			// check notification frequency for this course
+			$course_registration = $Course->get_registration($course->id);	
+			
+			// check notification frequency for the course and skip to next cron cycle if neccessary
+			if( $course_registration->last_notification_time + $course_registration->notification_frequency > time() ){
+				echo " - Skipping to next cron cycle.";
+				continue;
+			}
+
 			// if course log entry does not exist 
 			// or the last notification time is older than two days 
 			// then reinitialize course log
-			if( !$Course->log_exists($course->id) or $last_notification_time + 48*3600 < time() ) 
+			if( !$Course->log_exists($course->id) or $course_registration->last_notification_time + 48*3600 < time() ) 
 				$Course->initialize_log($course);
 			/*
 			*/
@@ -215,6 +223,7 @@ function cron(){
 				}
 			}
 		}
+		echo "\n****** notify_changes :: end ******\n\n";
 		return;
 	}
 

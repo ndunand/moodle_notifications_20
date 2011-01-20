@@ -35,7 +35,7 @@ class Course {
 		if(isset($settings->notify_by_sms) and $settings->notify_by_sms == 1) $course->notify_by_sms = 1;
 		$course->notify_by_rss = 0;
 		if(isset($settings->notify_by_rss) and $settings->notify_by_rss == 1) $course->notify_by_rss = 1;
-		var_dump($settings);
+		//var_dump($settings);
 		if(isset($settings->notification_frequency))
 			$course->notification_frequency = $settings->notification_frequency % 25 * 3600;
 		return $DB->update_record('block_notify_changes_courses', $course);
@@ -195,10 +195,10 @@ class Course {
 							on ({$CFG->prefix}block_notify_changes_log.module_id = {$CFG->prefix}course_modules.id) ) logs_with_visibility";
 		// select all modules that are visible and whose status is pending
 		$recent_activities = $DB->get_records_sql("select * from $subtable where course_id = $course_id and status='pending' and (visible = 1 or visible is null)");
-		print_r($recent_activities);
+		//print_r($recent_activities);
 		// clear all pending notifications
 		if(!empty($recent_activities))
-			$DB->get_records_sql("update {$CFG->prefix}block_notify_changes_log set status = 'notified' 
+			$DB->execute("update {$CFG->prefix}block_notify_changes_log set status = 'notified' 
 								where 
 									course_id = $course_id and status='pending' 
 									and id in ( select id from $subtable where course_id = $course_id and (visible = 1 or visible is null) )");

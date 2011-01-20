@@ -62,7 +62,7 @@ class SMS extends AbstractSMS {
 		if(count($deleted) > 0) {
 			// added items
 			$smsbody .= get_string('deleted', 'block_notify_changes').': ';
-			foreach ($updated as $module => $number) {
+			foreach ($deleted as $module => $number) {
 				$smsbody .= $number.' ';
 				$smsbody .= get_string($module, 'block_notify_changes').', ';
 			}
@@ -90,12 +90,17 @@ class SMS extends AbstractSMS {
 			$proper_size = $message_size - strlen($from . $subject_overhead . $subject) - 3;
 			$smsmessage = substr($smsmessage, 0, $proper_size) . '...';
 		}
+
 		/*
+		echo '<br />';
 		echo "$from\n\n";
 		echo "$to\n\n";
 		echo "$subject\n\n";
 		echo "$smsmessage\n\n";
+		echo '<br />';
+		return;
 		*/
+
 		$mail =& get_mailer();
         $mail->Sender = $from;
         $mail->From = $from;
@@ -118,8 +123,6 @@ class SMS extends AbstractSMS {
 			//Send Error
 			return $mail->ErrorInfo;
 		}
-		/*
-		*/
 	}
 }
 

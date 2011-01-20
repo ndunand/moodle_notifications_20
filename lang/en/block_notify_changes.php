@@ -14,8 +14,12 @@ $string['deleted'] = 'Deleted';
 // MODULES
 $string['assignment'] = 'Assignment';
 $string['chat'] = 'Chat';
+$string['url'] = 'Web link';
+$string['page'] = 'Page';
+$string['imscp'] = 'IMS package';
+$string['folder'] = 'Folder';
 $string['choice'] = 'Choice';
-$string['data'] = 'Data';
+$string['data'] = 'Database';
 $string['forum'] = 'Forum';
 $string['glossary'] = 'Glossary';
 $string['lesson'] = 'Lesson';
@@ -24,4 +28,5 @@ $string['scorm'] = 'Scorm';
 $string['survey'] = 'Survey';
 $string['wiki'] = 'Wiki';
 $string['resource'] = 'Resource';
+$string['workshop'] = 'Workshop';
 ?>
