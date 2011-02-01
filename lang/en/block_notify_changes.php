@@ -1,11 +1,16 @@
 <?php
 $string['pluginname'] = 'Notify Changes';
-$string['configuration_comment'] = 'Please enable your favourite notification channels.';
+$string['configuration_comment'] = 'None notification channel enabled.';
+$string['global_configuration_comment'] = 'Globally enabled notification channels.';
 $string['notify_by_email'] = 'Notify by e-mail';
 $string['notify_by_sms'] = 'Notify by SMS';
 $string['notify_by_rss'] = 'Notify by RSS';
+$string['email'] = 'e-mail';
+$string['sms'] = 'SMS';
+$string['rss'] = 'RSS';
 $string['notification_frequency'] = 'Notification frequency in hours';
 $string['mailsubject'] = 'Updates on course';
+$string['user_preference_settings'] = 'Personal Settings';
 $string['user_preference_header'] = 'Enable or Disable your notification channels';
 // ACTIONS
 $string['updated'] = 'Updated';

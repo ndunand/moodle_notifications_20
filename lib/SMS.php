@@ -81,11 +81,11 @@ class SMS extends AbstractSMS {
 		$to = "$user->phone2@sms.switch.ch";
 		$subject = substr($course->shortname, 0, $course_shortname_limit);
 		$smsmessage = $this->message($changelist, $course);
-		echo $smsmessage;
+		//echo $smsmessage;
 
 		// if the sms message is longer than 160 chars then cut and put ... at the end of the message
 		$message_length = strlen($from . $subject_overhead . $subject . $smsmessage);
-		echo $message_length."\n";
+		//echo $message_length."\n";
 		if($message_length > $message_size){
 			$proper_size = $message_size - strlen($from . $subject_overhead . $subject) - 3;
 			$smsmessage = substr($smsmessage, 0, $proper_size) . '...';

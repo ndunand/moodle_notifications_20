@@ -75,7 +75,7 @@ class Course {
 	}
 
 	function uses_notify_changes_block($course_id){
-		global $DB;
+		global $DB, $CFG;
 		$id = $DB->get_records_sql("select instanceid from {$CFG->prefix}context where id in (select parentcontextid from {$CFG->prefix}block_instances where blockname = 'notify_changes') and instanceid = $course_id");
 		if(empty($id))
 			return false;
