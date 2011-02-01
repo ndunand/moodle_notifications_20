@@ -6,12 +6,14 @@ class Course {
 
 	function register($course_id, $starting_time){
 		global $DB;
+		global $CFG;
 		$course=new Object();
 		$course->course_id = $course_id;
 		$course->last_notification_time = $starting_time;
 		$course->notify_by_email = 1;
 		$course->notify_by_sms = 1;
 		$course->notify_by_rss = 1;
+		$course->notification_frequency = $CFG->block_notify_changes_frequency*3600;
 		return $DB->insert_record('block_notify_changes_courses', $course);
 	}
 

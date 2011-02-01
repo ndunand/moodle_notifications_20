@@ -14,24 +14,38 @@ class block_notify_changes extends block_base {
 		$this->title = get_string('pluginname', 'block_notify_changes'); 
 	}
 
-	function has_config(){ return true; }
+	function has_config() { return true; }
 
-	function after_install(){
+	function after_install() {
 		global $CFG;
 		// initialize the global configuration
 		$global_config = array(
 			"block_notify_changes_email_channel" => 1,
 			"block_notify_changes_sms_channel" => 1,
 			"block_notify_changes_rss_channel" => 1,
-			"global_notification_frequency" => 12
+			"block_notify_changes_frequency" => 12
 		);
 		return parent::config_save($global_config);
 	}
 
-//***************************************************	s
+	function before_delete() {
+		global $CFG;	
+		unset($CFG->block_notify_changes_email_channel);
+		unset($CFG->block_notify_changes_sms_channel);
+		unset($CFG->block_notify_changes_rss_channel);
+		unset($CFG->block_notify_changes_frequency);
+		return true;
+	}
+
+	function applicable_formats() {
+		return array('course-view' => true);
+	}
+
+
+//***************************************************
 // Configurations
 //***************************************************	
-	function specialization(){
+	function specialization() {
 		global $COURSE;
 		$Course = new Course();
 		// if the course has not been registered so far
@@ -160,7 +174,7 @@ class block_notify_changes extends block_base {
 // Cron
 //***************************************************	
 
-function cron(){
+function cron() {
 		global $CFG;
 		echo "\n\n****** notify_changes :: begin ******";
 		$User = new User();

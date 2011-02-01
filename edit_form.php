@@ -35,9 +35,10 @@ class block_notify_changes_edit_form extends block_edit_form {
 			$CFG->block_notify_changes_sms_channel == 1
 		) {
 	 		$options = array();
-			for($i=1; $i<25; ++$i) $options[$i] = $i;
+			for($i=1; $i<25; ++$i)
+				$options[$i] = $i;
         	$mform->addElement('select', 'notification_frequency', get_string('notification_frequency', 'block_notify_changes'), $options);
-        	$mform->setDefault('notification_frequency', $this->block->cron/3600);
+        	$mform->setDefault('notification_frequency', $course_notification_setting->notification_frequency/3600);
 		}
     }
 
