@@ -5,6 +5,7 @@ $string['global_configuration_comment'] = 'Globally enabled notification channel
 $string['notify_by_email'] = 'Notify by e-mail';
 $string['notify_by_sms'] = 'Notify by SMS';
 $string['notify_by_rss'] = 'Notify by RSS';
+$string['last_notification'] = 'Last';
 $string['email_icon_tooltip'] = 'Changes to the course will be notified by e-mail.';
 $string['sms_icon_tooltip'] = 'Changes to the course will be notified by SMS.';
 $string['sms_icon_phone_number_missing_tooltip'] = 'Mobile phone number not set. Click for instructions.';

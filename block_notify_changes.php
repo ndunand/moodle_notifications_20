@@ -150,7 +150,11 @@ class block_notify_changes extends block_base {
 		)
 			$this->content->text =  get_string('configuration_comment', 'block_notify_changes');
 		else {
-			$this->content->text = '';
+			// last notification info
+			$this->content->text = "<span style='font-size: 12px'>";
+			$this->content->text.= get_string('last_notification', 'block_notify_changes');
+			$this->content->text.= ": ".date("j M Y G:i:s",$course_registration->last_notification_time);
+			$this->content->text.= "<span /><br />";
 
 			if ( $CFG->block_notify_changes_email_channel == 1 and $course_registration->notify_by_email == 1 ) {
 				$this->content->text.= "<img src='$CFG->wwwroot/blocks/notify_changes/images/Mail-icon.png' ";

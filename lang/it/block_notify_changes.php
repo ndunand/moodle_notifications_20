@@ -5,6 +5,7 @@ $string['global_configuration_comment'] = 'Canali di notifica abilitati globalme
 $string['notify_by_email'] = 'Notifica via e-mail';
 $string['notify_by_sms'] = 'Notifica via SMS';
 $string['notify_by_rss'] = 'Notifica via RSS';
+$string['last_notification'] = 'Ultima';
 $string['email_icon_tooltip'] = 'Le modifiche al corso verranno notificate via e-mail.';
 $string['sms_icon_tooltip'] = 'Le modifiche al corso verranno notificate via SMS.';
 $string['sms_icon_phone_number_missing_tooltip'] = 'Il numero del telefono cellulare non è stato impostato. Clicca qui per le istruzioni.';
