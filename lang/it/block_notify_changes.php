@@ -10,6 +10,7 @@ $string['email_icon_tooltip'] = 'La notifica via e-mail dei nuovi contenuti è a
 $string['sms_icon_tooltip'] = 'La notifica via e-mail dei nuovi contenuti è abilitata. Un SMS verrà inviato ogni';
 $string['end_of_tooltip'] = 'ore in caso di nuovi contenuti.';
 $string['sms_icon_phone_number_missing_tooltip'] = 'Il numero del telefono cellulare non è stato impostato. Clicca qui per le istruzioni.';
+$string['sms_class_not_implemented'] = 'Questo canale non &egrave; disponibile in questa installazione. Per maggiori informazioni su come procedere per abiltarlo leggere il file README.txt nella cartella del plugin.';
 $string['rss_icon_tooltip'] = 'La notifica via RSS è abilitata. Clicca sulla icona per aprire il canale RSS e abbonarti.';
 $string['email'] = 'e-mail';
 $string['sms'] = 'SMS';

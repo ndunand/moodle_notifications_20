@@ -4,7 +4,12 @@
 // SMS notification abstract class
 //***************************************************	
 abstract class AbstractSMS{
-	// overhead are number of chars of overhead in the sms message
+    // once the class is extended to SMS class and
+    // the methods message and notify_changes are 
+    // implemented according to your provider settings
+    // the SMS functionality should be available in
+    // global, course and user settings
+
 	abstract function message($changelist, $course);
 	abstract function notify_changes($changelist, $user, $course);
 }

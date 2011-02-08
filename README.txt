@@ -11,6 +11,13 @@ This plugin notifies changes and updates on Moodle courses via
 three channels: e-mail, sms and rss.
 For the license please check LICENSE.txt file.
 
+
+Note:
+SMS functionality depends on your provider. To enable SMS
+channel please extend lib/AbstractSMS.php class. Call the new
+class SMS. Check lib/SMS.php.sample if you need a starting
+point.
+
 Installation:
 Before you start the installation please read the instructions. 
 	
@@ -42,5 +49,5 @@ Bugs:
 If you find a bug please submit it here:
 http://sourceforge.net/tracker/?func=add&group_id=398313&atid=1652206
 
-Please provide a description with Moodle and notify_changes 
-plugin version.
+Please provide the bug description and don't forget Moodle and 
+notify_changes plugin version.
