@@ -10,6 +10,7 @@ $string['email_icon_tooltip'] = 'The notification of new content via e-mail is e
 $string['sms_icon_tooltip'] = 'The notification of new content via SMS is enabled. You will receive an sms every';
 $string['end_of_tooltip'] = 'hours if new contents or activities are added to the course.';
 $string['sms_icon_phone_number_missing_tooltip'] = 'Mobile phone number not set. Click for instructions on how to proceed to set your personal number.';
+$string['sms_class_not_implemented'] = 'This channel is not available in your installation. Please refer to the README.txt file inside the plugin directory for more information on how to proceed to enable it.';
 $string['rss_icon_tooltip'] = 'The notification of new content via RSS is enabled. Click on the icon to open RSS channel and to subscribe.';
 $string['email'] = 'e-mail';
 $string['sms'] = 'SMS';

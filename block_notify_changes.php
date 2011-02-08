@@ -164,7 +164,7 @@ class block_notify_changes extends block_base {
 				//$this->content->text.= '<br />';
 			} 
 			
-			if ( $CFG->block_notify_changes_sms_channel == 1 and $course_registration->notify_by_sms == 1 ) {
+			if ( $CFG->block_notify_changes_sms_channel == 1 and $course_registration->notify_by_sms == 1 and class_exists('SMS') ) {
 				if( is_numeric($USER->phone2) ) {
 					$this->content->text.= "<img src='$CFG->wwwroot/blocks/notify_changes/images/SMS-icon.png' ";
 					$this->content->text.= "alt='sms icon' ";
@@ -286,6 +286,7 @@ function cron() {
 				// and if the user has set the mobile phone number 
 				// then send a notification by sms
 				if( 
+					class_exists('SMS') and
 					$CFG->block_notify_changes_sms_channel == 1 and 
 					$course_registration->notify_by_sms == 1 and 
 					$user_preferences->notify_by_sms == 1 and 
