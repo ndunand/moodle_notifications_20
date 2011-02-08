@@ -159,7 +159,8 @@ class block_notify_changes extends block_base {
 			if ( $CFG->block_notify_changes_email_channel == 1 and $course_registration->notify_by_email == 1 ) {
 				$this->content->text.= "<img src='$CFG->wwwroot/blocks/notify_changes/images/Mail-icon.png' ";
 				$this->content->text.= "alt='e-mail icon' ";
-				$this->content->text.= "title='".get_string('email_icon_tooltip', 'block_notify_changes')."' />";
+				$this->content->text.= "title='".get_string('email_icon_tooltip', 'block_notify_changes')." ";
+				$this->content->text.= $course_registration->notification_frequency / 3600 . " ".get_string('end_of_tooltip', 'block_notify_changes')."' />";
 				//$this->content->text.= '<br />';
 			} 
 			
@@ -167,7 +168,8 @@ class block_notify_changes extends block_base {
 				if( is_numeric($USER->phone2) ) {
 					$this->content->text.= "<img src='$CFG->wwwroot/blocks/notify_changes/images/SMS-icon.png' ";
 					$this->content->text.= "alt='sms icon' ";
-					$this->content->text.= "title='".get_string('sms_icon_tooltip', 'block_notify_changes')."' />";
+					$this->content->text.= "title='".get_string('sms_icon_tooltip', 'block_notify_changes')." ";
+					$this->content->text.= $course_registration->notification_frequency / 3600 . " ".get_string('end_of_tooltip', 'block_notify_changes')."' />";
 				}
 				else {
 					//$this->content->text.= "<a target='_blank' href='$CFG->wwwroot/help.php?module=plugin&file=../blocks/notify_changes/lang/en_utf8/help/prova.html'>";
@@ -186,6 +188,7 @@ class block_notify_changes extends block_base {
 				$this->content->text.= "title='".get_string('rss_icon_tooltip', 'block_notify_changes')."' />";
 				$this->content->text.= "</a>";
 			}
+
 		}
 
 		$this->content->text.= $this->personal_settings($course_registration);
