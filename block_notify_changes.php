@@ -110,7 +110,7 @@ class block_notify_changes extends block_base {
 			$up_interface.= get_string('notify_by_email', 'block_notify_changes');
 			$up_interface.='</div>';
 		}
-		if ( $CFG->block_notify_changes_sms_channel == 1 and $course_registration->notify_by_sms == 1 ) {
+		if ( class_exists('SMS') and $CFG->block_notify_changes_sms_channel == 1 and $course_registration->notify_by_sms == 1 ) {
 			$up_interface.='<div>';
 			$up_interface.="<input type='checkbox' name='notify_by_sms' value='1' $sms_notification_status />";
 			$up_interface.= get_string('notify_by_sms', 'block_notify_changes');
