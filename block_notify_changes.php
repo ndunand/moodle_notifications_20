@@ -117,9 +117,9 @@ class block_notify_changes extends block_base {
 			$up_interface.='</div>';
 		}
 		$up_interface.='</form>';
-		$up_interface.='';
 		$up_interface.='<input type="button" name="save_user_preferences" value="Save" onclick="save_user_preferences()" />';
 		$up_interface.='<input type="button" name="cancel" value="Cancel" onclick="hide_user_preferences_panel()" />';
+		$up_interface.='</div>';
 		$up_interface.='</div>';
 		return $up_interface;
 		/*
