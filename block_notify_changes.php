@@ -204,7 +204,13 @@ function cron() {
 		global $CFG;
 		echo "\n\n****** notify_changes :: begin ******";
 		$User = new User();
+		// clean deleted users data
+		$User->collect_garbage();
+
 		$Course = new Course();
+		// clean deleted courses data
+		$Course->collect_garbage();
+
 		// get the list of courses that are using this block
 		$courses = $Course->get_all_courses_using_notify_changes_block();
 

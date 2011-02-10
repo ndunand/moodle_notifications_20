@@ -63,5 +63,14 @@ class User {
 		else
 			return null;
 	}
+
+	// purge entries of users that have been deleted
+	function collect_garbage(){
+		global $CFG, $DB;
+		$course_list = "(select id from {$CFG->prefix}course)";
+		$deleted_users_list = "(select id from {$CFG->prefix}user where deleted=1)";
+		$DB->execute("delete from {$CFG->prefix}block_notify_changes_users where course_id not in $course_list");	
+		$DB->execute("delete from {$CFG->prefix}block_notify_changes_users where user_id in $deleted_users_list");	
+	}
 }
 ?>

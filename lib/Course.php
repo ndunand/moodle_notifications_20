@@ -211,7 +211,14 @@ class Course {
 		global $CFG, $DB;
 		return current( $DB->get_records_sql("select fullname, summary from {$CFG->prefix}course where id = $course_id") );
 	}
-
+	
+	// purge entries of courses that have been deleted
+	function collect_garbage(){
+		global $CFG, $DB;
+		$course_list = "(select id from {$CFG->prefix}course)";
+		$DB->execute("delete from {$CFG->prefix}block_notify_changes_courses where course_id not in $course_list");	
+		$DB->execute("delete from {$CFG->prefix}block_notify_changes_log where course_id not in $course_list");	
+	}
 
 }
 ?>
