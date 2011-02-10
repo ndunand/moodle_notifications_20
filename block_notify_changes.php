@@ -247,24 +247,19 @@ function cron() {
 				}
 			}
 
-			
-			// check notification frequency for the course and skip to next cron cycle if neccessary
-			if( $course_registration->last_notification_time + $course_registration->notification_frequency > time() ){
-				echo " - Skipping to next cron cycle.";
-				continue;
-			}
-
 			// if course log entry does not exist 
 			// or the last notification time is older than two days 
 			// then reinitialize course log
 			if( !$Course->log_exists($course->id) or $course_registration->last_notification_time + 48*3600 < time() ) 
 				$Course->initialize_log($course);
-			/*
-			*/
-			// simpler rule for debuging purposes
-			//if( !$Course->log_exists($course->id) ) $Course->initialize_log($course);
 
 			$Course->update_log($course);
+
+			// check notification frequency for the course and skip to next cron cycle if neccessary
+			if( $course_registration->last_notification_time + $course_registration->notification_frequency > time() ){
+				echo " - Skipping to next cron cycle.";
+				continue;
+			}
 
 			// check if the course has something new or not
 			$changelist = $Course->get_recent_activities($course->id); 

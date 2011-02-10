@@ -39,6 +39,7 @@ class RSS {
 					<managingEditor>$teacher->email</managingEditor>
 					<webMaster>helpdesk@elearninglab.org</webMaster>";
 
+		//$moodle_logs = ("select 
 		$moodle_logs = $DB->get_records_sql("select 
 											{$CFG->prefix}log.id, 
 											{$CFG->prefix}block_notify_changes_log.module_id, 
@@ -50,7 +51,6 @@ class RSS {
 											{$CFG->prefix}log join {$CFG->prefix}block_notify_changes_log on 
 												({$CFG->prefix}block_notify_changes_log.module_id = {$CFG->prefix}log.cmid) 
 													where {$CFG->prefix}log.action in ('add','update','delete mod') 
-														and {$CFG->prefix}block_notify_changes_log.status = 'notified' 
 															and course = $course_id order by time desc limit 20");
 
 		//print_r($moodle_logs); exit;
