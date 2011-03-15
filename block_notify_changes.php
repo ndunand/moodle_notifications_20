@@ -165,19 +165,18 @@ class block_notify_changes extends block_base {
 			} 
 			
 			if ( $CFG->block_notify_changes_sms_channel == 1 and $course_registration->notify_by_sms == 1 and class_exists('SMS') ) {
-				if( is_numeric($USER->phone2) ) {
-					$this->content->text.= "<img src='$CFG->wwwroot/blocks/notify_changes/images/SMS-icon.png' ";
-					$this->content->text.= "alt='sms icon' ";
-					$this->content->text.= "title='".get_string('sms_icon_tooltip', 'block_notify_changes')." ";
-					$this->content->text.= $course_registration->notification_frequency / 3600 . " ".get_string('end_of_tooltip', 'block_notify_changes')."' />";
-				}
-				else {
+				if( empty($USER->phone2) ) {
 					//$this->content->text.= "<a target='_blank' href='$CFG->wwwroot/help.php?module=plugin&file=../blocks/notify_changes/lang/en_utf8/help/prova.html'>";
 					$this->content->text.= "<a target='_blank' href='$CFG->wwwroot/blocks/notify_changes/help.php'>";
 					$this->content->text.= "<img src='$CFG->wwwroot/blocks/notify_changes/images/SMS-icon_warning.png' ";
 					$this->content->text.= "alt='sms warning icon' ";
 					$this->content->text.= "title='".get_string('sms_icon_phone_number_missing_tooltip', 'block_notify_changes')."' />";
 					$this->content->text.= "</a>";
+				} else {
+					$this->content->text.= "<img src='$CFG->wwwroot/blocks/notify_changes/images/SMS-icon.png' ";
+					$this->content->text.= "alt='sms icon' ";
+					$this->content->text.= "title='".get_string('sms_icon_tooltip', 'block_notify_changes')." ";
+					$this->content->text.= $course_registration->notification_frequency / 3600 . " ".get_string('end_of_tooltip', 'block_notify_changes')."' />";
 				}
 				//$this->content->text.= '<br />';
 			}
