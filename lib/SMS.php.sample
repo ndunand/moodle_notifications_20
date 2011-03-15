@@ -79,6 +79,10 @@ class SMS extends AbstractSMS {
 		$subject_overhead = ' () '; // space()space -> overhead of 4 chars in the subject
 		$from = 'elab@usi.ch';
 		$to = "$user->phone2@sms.switch.ch";
+		// replace all occurences of ++ with 00
+		$to = str_replace('++', '00', $to);
+		// replace all occurences of + with 00
+		$to = str_replace('+', '00', $to);
 		$subject = substr($course->shortname, 0, $course_shortname_limit);
 		$smsmessage = $this->message($changelist, $course);
 		//echo $smsmessage;
@@ -90,7 +94,7 @@ class SMS extends AbstractSMS {
 			$proper_size = $message_size - strlen($from . $subject_overhead . $subject) - 3;
 			$smsmessage = substr($smsmessage, 0, $proper_size) . '...';
 		}
-
+		
 		/*
 		echo '<br />';
 		echo "$from\n\n";

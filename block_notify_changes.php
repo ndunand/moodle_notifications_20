@@ -291,8 +291,7 @@ function cron() {
 					$CFG->block_notify_changes_sms_channel == 1 and 
 					$course_registration->notify_by_sms == 1 and 
 					$user_preferences->notify_by_sms == 1 and 
-					!empty($user->phone2) and 
-					is_numeric($user->phone2) 
+					!empty($user->phone2) 
 				) {
 					$sms = new SMS();
 					$sms->notify_changes($changelist, $user, $course);
