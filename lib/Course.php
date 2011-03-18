@@ -98,7 +98,6 @@ class Course {
 	function get_updated_and_deleted_modules($course_id){
 		global $DB;
 		$last_notification_time = $this->get_last_notification_time($course_id);
-		$this->update_last_notification_time($course_id, time());
 		return $DB->get_records_select('log', "course=$course_id and action in ('update', 'delete mod') and time > $last_notification_time", null,'cmid,action');
 	}
 

@@ -258,7 +258,14 @@ function cron() {
 			if( !$Course->log_exists($course->id) or $course_registration->last_notification_time + 48*3600 < time() ) 
 				$Course->initialize_log($course);
 
-			$Course->update_log($course);
+			print_r("\n");
+			print_r($course_registration->last_notification_time);
+			print_r("\n");
+			print_r($course_registration->notification_frequency);
+			print_r("\n");
+			print_r($course_registration->last_notification_time + $course_registration->notification_frequency);
+			print_r("\n");
+			print_r(time());
 
 			// check notification frequency for the course and skip to next cron cycle if neccessary
 			if( $course_registration->last_notification_time + $course_registration->notification_frequency > time() ){
@@ -266,8 +273,12 @@ function cron() {
 				continue;
 			}
 
+			$Course->update_log($course);
+
 			// check if the course has something new or not
 			$changelist = $Course->get_recent_activities($course->id); 
+			// update the last notification time
+			$Course->update_last_notification_time($course->id, time());
 			if( empty($changelist) ) continue; // check the next course. No new items in this one.
 
 
