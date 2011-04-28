@@ -42,6 +42,8 @@ $string['survey'] = 'Questionario';
 $string['wiki'] = 'Wiki';
 $string['resource'] = 'Risorsa';
 $string['workshop'] = 'Workshop';
+$string['quizport'] = 'Quizport';
+$string['checklist'] = 'Checklist';
 // help 
 $string['help_title'] = 'Impostare il numero di celluare';
 $string['set_mobile_number_instructions'] = "Andare sulla pagina del corso e cliccare sul proprio nome nell'angolo in alto a destra. Scegliere la voce Modifica. Scorrere la pagina fino in fondo e immettere il proprio numero di cellulare nel campo Cellulare. Cliccare su Aggiornamento Profilo per salvare.";

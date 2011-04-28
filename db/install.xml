@@ -24,7 +24,7 @@
         <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="module_id"/>
         <FIELD NAME="module_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="course_id" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="module_id" NEXT="type"/>
-        <FIELD NAME="type" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="resource" SEQUENCE="false" ENUM="true" ENUMVALUES="'assignment', 'chat', 'choice', 'data', 'forum', 'glossary', 'lesson', 'quiz', 'scorm', 'survey', 'wiki', 'resource'" PREVIOUS="name" NEXT="action"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="resource" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="action"/>
         <FIELD NAME="action" TYPE="char" LENGTH="7" NOTNULL="true" DEFAULT="added" SEQUENCE="false" ENUM="true" ENUMVALUES="'added', 'updated', 'deleted'" PREVIOUS="type" NEXT="status"/>
         <FIELD NAME="status" TYPE="char" LENGTH="8" NOTNULL="true" DEFAULT="notified" SEQUENCE="false" ENUM="true" ENUMVALUES="'notified', 'pending'" PREVIOUS="action"/>
       </FIELDS>
