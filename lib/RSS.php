@@ -17,6 +17,10 @@ class RSS {
 		}
 		$User = new User();
 		$teacher = $User->get_professor($course_id);
+		// if no teacher then add a dummy mail address
+		if( empty($teacher) ) {
+			$teacher->email = "noteacher@inthiscourse.org";
+		}
 
 		$course_info = $Course->get_course_info($course_id);
 		//var_dump($course_info); exit;
@@ -39,39 +43,28 @@ class RSS {
 					<managingEditor>$teacher->email</managingEditor>
 					<webMaster>helpdesk@elearninglab.org</webMaster>";
 
-		//$moodle_logs = ("select 
-		$moodle_logs = $DB->get_records_sql("select 
-											{$CFG->prefix}log.id, 
-											{$CFG->prefix}block_notify_changes_log.module_id, 
-											{$CFG->prefix}block_notify_changes_log.type, 
-											time, 
-											name, 
-											{$CFG->prefix}log.action 
-											from 
-											{$CFG->prefix}log join {$CFG->prefix}block_notify_changes_log on 
-												({$CFG->prefix}block_notify_changes_log.module_id = {$CFG->prefix}log.cmid) 
-													where {$CFG->prefix}log.action in ('add','update','delete mod') 
-															and course = $course_id order by time desc limit 20");
 
-		//print_r($moodle_logs); exit;
+		// get the last 20 entries form the block logs
 
-		foreach($moodle_logs as $log){
+		$logs = $Course->get_logs($course_id, 20);
+
+		foreach($logs as $log){
 			$output .= "<item>";
 			$output .= '<title>'.get_string($log->type, 'block_notify_changes').'</title>';
-			if($log->action == 'delete mod')
+			if($log->action == 'deleted')
 				$output .= "<link></link>";
 			else
 				$output .= "<link>$CFG->wwwroot/mod/$log->type/view.php?id=$log->module_id</link>";
 
 			$output .= "<description>";
 			switch($log->action){
-				case 'add':	
+				case 'added':	
 					$output .= get_string('added', 'block_notify_changes').' ';
 					break;
-				case 'update':	
+				case 'updated':	
 					$output .= get_string('updated', 'block_notify_changes').' ';
 					break;
-				case 'delete mod':	
+				case 'deleted':	
 					$output .= get_string('deleted', 'block_notify_changes').' ';
 					break;
 			}

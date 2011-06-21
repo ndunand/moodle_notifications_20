@@ -107,8 +107,9 @@ class Course {
 		global $DB;
 		$modinfo =& get_fast_modinfo($course);
 		foreach($modinfo->cms as $cms => $module){
-			// filter labels
-			if($module->modname == 'label' or $this->is_module_logged($course->id, $module->id, $module->modname)) continue;
+			// skip labels, invisible modules and logged modules
+			if($module->modname == 'label' or $module->visible == 0 or $this->is_module_logged($course->id, $module->id, $module->modname)) continue;
+
 			$new_record = new Object();
 			$new_record->course_id = $course->id;
 			$new_record->module_id = $module->id;
@@ -128,16 +129,28 @@ class Course {
 
 		foreach($course_updates as $course_update){
 			$log_row = $this->get_log_entry($course_update->cmid);
-			if($course_update->action == 'update'){
-				$log_row->action = 'updated';
-				// set new name if name has been changed
-				$log_row->name = $modinfo->cms[$log_row->module_id]->name;
-				$log_row->status = 'pending';
-			} else if($course_update->action == 'delete mod') {
-				$log_row->action = 'deleted';
-				$log_row->status = 'pending';
+			// if $log_row is empty than this module has not been registered
+			// it is probably invisible
+			if ( empty($log_row) ) {
+				continue;
+			} else {
+
+				$new_record = new Object();
+				$new_record->course_id = $log_row->course_id;
+				$new_record->module_id = $log_row->module_id;
+				$new_record->type = $log_row->type;
+				$new_record->status = 'pending';
+
+				if($course_update->action == 'update'){
+					$new_record->name = $modinfo->cms[$log_row->module_id]->name;
+					$new_record->action = 'updated';
+				} else if($course_update->action == 'delete mod') {
+					$new_record->name = $log_row->name;
+					$new_record->action = 'deleted';
+				}
+
+				$DB->insert_record('block_notify_changes_log', $new_record);
 			}
-			$DB->update_record('block_notify_changes_log', $log_row);
 		}
 		
 	}
@@ -149,8 +162,9 @@ class Course {
 		$DB->delete_records('block_notify_changes_log', array('course_id'=>$course->id) );
 		// add new records
 		foreach($modinfo->cms as $cms => $module){
-			// filter labels
-			if( $module->modname == 'label') continue;
+			// filter labels and invisible modules
+			if( $module->modname == 'label' or $module->visible == 0 ) continue;
+
 			$new_record = new Object();
 			$new_record->course_id = $course->id;
 			$new_record->module_id = $module->id;
@@ -184,8 +198,23 @@ class Course {
 	}
 
 	function get_log_entry($module_id){
+		global $DB;
+		$entry = $DB->get_records_select('block_notify_changes_log', "module_id = $module_id");
+		if ( empty($entry) ) {
+			return null;	
+		} else {
+			return  current( $entry );
+		}
+	}
+
+	function get_logs($course_id, $limit){
 		global $DB, $CFG;
-		return current( $DB->get_records_select('block_notify_changes_log', "module_id = $module_id") );
+		$entries = $DB->get_records_sql("select * from {$CFG->prefix}block_notify_changes_log order by id desc limit $limit");
+		if ( empty($entries) ) {
+			return null;	
+		} else {
+			return $entries;
+		}
 	}
 
 	function get_recent_activities($course_id){

@@ -31,7 +31,9 @@ class eMail {
 			$mailbody .='<li>';
 			$mailbody .= get_string($change->action, 'block_notify_changes').' ';
 			$mailbody .= get_string($change->type, 'block_notify_changes')." : ";
-			$mailbody .="<a href=\"$CFG->wwwroot/mod/$change->type/view.php?id=$change->module_id\">$change->name</a>";
+			if ( $change->action != "deleted") {
+				$mailbody .="<a href=\"$CFG->wwwroot/mod/$change->type/view.php?id=$change->module_id\">$change->name</a>";
+			}
 			$mailbody .= '</li>';
 		}
 		$mailbody .= '</ul>';
@@ -49,7 +51,9 @@ class eMail {
 			$mailbody .= "\t".get_string($change->action, 'block_notify_changes').' ';
 			$mailbody .= "\t".get_string($change->type, 'block_notify_changes')." : ";
 			$mailbody .= $change->name."\r\n";
-			$mailbody .= "\t$CFG->wwwroot/mod/$change->type/view.php?id=$change->module_id\r\n\r\n";
+			if ( $change->action != "deleted") {
+				$mailbody .= "\t$CFG->wwwroot/mod/$change->type/view.php?id=$change->module_id\r\n\r\n";
+			}
 		}
 		/*
 		print_r("\n");
