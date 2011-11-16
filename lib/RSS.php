@@ -4,7 +4,7 @@ include_once LIB_DIR."Course.php";
 include_once LIB_DIR."User.php";
 
 class RSS {
-	function __construct($course_id){
+	function __construct( $course_id ){
 		global $CFG, $DB;	
 		
 		$Course = new Course();
@@ -16,15 +16,15 @@ class RSS {
 			return;
 		}
 		$User = new User();
-		$teacher = $User->get_professor($course_id);
+		$teacher = $User->get_professor( $course_id );
 		// if no teacher then add a dummy mail address
 		if( empty($teacher) ) {
 			$teacher->email = "noteacher@inthiscourse.org";
 		}
 
-		$course_info = $Course->get_course_info($course_id);
+		$course_info = $Course->get_course_info( $course_id );
 		//var_dump($course_info); exit;
-		$course_registration = $Course->get_registration($course_id);
+		$course_registration = $Course->get_registration( $course_id );
 
 		//print_r("here");
 		if ( $course_registration->notify_by_rss != 1 ) return;
@@ -46,9 +46,9 @@ class RSS {
 
 		// get the last 20 entries form the block logs
 
-		$logs = $Course->get_logs($course_id, 20);
+		$logs = $Course->get_logs( $course_id, 20 );
 
-		foreach($logs as $log){
+		foreach( $logs as $log ) {
 			$output .= "<item>";
 			$output .= '<title>'.get_string($log->type, 'block_notify_changes').'</title>';
 			if($log->action == 'deleted')
@@ -57,7 +57,7 @@ class RSS {
 				$output .= "<link>$CFG->wwwroot/mod/$log->type/view.php?id=$log->module_id</link>";
 
 			$output .= "<description>";
-			switch($log->action){
+			switch( $log->action ) {
 				case 'added':	
 					$output .= get_string('added', 'block_notify_changes').' ';
 					break;
@@ -68,7 +68,7 @@ class RSS {
 					$output .= get_string('deleted', 'block_notify_changes').' ';
 					break;
 			}
-			$output .= get_string($log->type, 'block_notify_changes').': ';
+			$output .= get_string( $log->type, 'block_notify_changes' ).': ';
 			$output .= $log->name;
 			$output .= "</description>";
 			$output .= "</item>";
@@ -87,7 +87,7 @@ if( empty($course_id) ) {
 	exit;
 }
 
-$rss = new RSS($course_id);
+$rss = new RSS( $course_id );
 /*
 */
 ?>

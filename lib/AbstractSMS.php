@@ -10,8 +10,8 @@ abstract class AbstractSMS{
     // the SMS functionality should be available in
     // global, course and user settings
 
-	abstract function message($changelist, $course);
-	abstract function notify_changes($changelist, $user, $course);
+	abstract function message( $changelist, $course );
+	abstract function notify_changes( $changelist, $user, $course );
 }
 
 ?>

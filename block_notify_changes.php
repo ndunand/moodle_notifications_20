@@ -51,11 +51,13 @@ class block_notify_changes extends block_base {
 		// if the course has not been registered so far
 		// then register the course and set the starting time
 		// for notifications
-		if( !$Course->is_registered($COURSE->id) ) 
+		if( !$Course->is_registered($COURSE->id) ) {
 			$Course->register($COURSE->id, time());
+		}
 		// intialize logs; perform this operation just once
-		if( !$Course->log_exists($COURSE->id) ) 
+		if( !$Course->log_exists($COURSE->id) ) {
 			$Course->initialize_log($COURSE);
+		}
 	}
 
 	function instance_allow_config() {
@@ -74,54 +76,70 @@ class block_notify_changes extends block_base {
 		global $COURSE;
 		global $USER;
 
-		$User = new User();
-		$user_preferences = $User->get_preferences($USER->id, $COURSE->id);
 		// if admin user or both sms and email notifications
 		// are disabled in the course then do not display user preferences
 		if( 
-			is_null($user_preferences) or 
 			($CFG->block_notify_changes_email_channel != 1 and $CFG->block_notify_changes_sms_channel != 1) or
 			($course_registration->notify_by_email == 0 and $course_registration->notify_by_sms == 0 ) 
-		) return;
+		) {
+			return '';
+		} else {
+			$User = new User();
+			$user_preferences = $User->get_preferences($USER->id, $COURSE->id);
 
-		// prepare mail notification status
-		$mail_notification_status = '';
-		if( $user_preferences->notify_by_email == 1) $mail_notification_status = 'checked="checked"';
+			// intialize preferences if preferences if necessary
+			if(is_null($user_preferences)) {
+				$user_preferences = new Object();	
+				$user_preferences->user_id = $USER->id;
+				$user_preferences->course_id = $COURSE->id;
+				$user_preferences->notify_by_email = 1;
+				$user_preferences->notify_by_sms = 1;
+				$User->initialize_preferences(	$user_preferences->user_id, 
+												$user_preferences->course_id, 
+												$user_preferences->notify_by_email, 
+												$user_preferences->notify_by_sms );
+			}
 
-		$sms_notification_status = '';
-		if( $user_preferences->notify_by_sms == 1) $sms_notification_status = 'checked="checked"';
-		//user preferences interface
-		$up_interface ="<script src='$CFG->wwwroot/blocks/notify_changes/js/jquery-1.4.3.js' type='text/javascript'></script>";
-		$up_interface.="<script src='$CFG->wwwroot/blocks/notify_changes/js/user_preferences_interface.php' type='text/javascript'></script>";
-		$up_interface.='<div id="notify_changes_config_preferences">';
-		$up_interface.='<a id="notify_changes_user_preferences_trigger" href="#" onclick="show_user_preferences_panel()">';
-		$up_interface.= get_string('user_preference_settings', 'block_notify_changes');
-		$up_interface.= '</a>';
-		$up_interface.='<div id="notify_changes_user_preferences" style="display:none">';
-		$up_interface.='<div>';
-		$up_interface.= get_string('user_preference_header', 'block_notify_changes');
-		$up_interface.='</div>';
-		$up_interface.='<form id="user_preferences">';
-		$up_interface.='<input type="hidden" name="user_id" value="'.$USER->id.'" />';
-		$up_interface.='<input type="hidden" name="course_id" value="'.$COURSE->id.'" />';
-		if ( $CFG->block_notify_changes_email_channel == 1 and $course_registration->notify_by_email == 1 ) {
+			// prepare mail notification status
+			$mail_notification_status = '';
+			if( isset($user_preferences->notify_by_email) and $user_preferences->notify_by_email == 1) { $mail_notification_status = 'checked="checked"'; }
+
+			$sms_notification_status = '';
+			if( isset($user_preferences->notify_by_sms) and $user_preferences->notify_by_sms == 1) { $sms_notification_status = 'checked="checked"'; }
+
+			//user preferences interface
+			$up_interface ="<script src='$CFG->wwwroot/blocks/notify_changes/js/jquery-1.4.3.js' type='text/javascript'></script>";
+			$up_interface.="<script src='$CFG->wwwroot/blocks/notify_changes/js/user_preferences_interface.php' type='text/javascript'></script>";
+			$up_interface.='<div id="notify_changes_config_preferences">';
+			$up_interface.='<a id="notify_changes_user_preferences_trigger" href="#" onclick="show_user_preferences_panel()">';
+			$up_interface.= get_string('user_preference_settings', 'block_notify_changes');
+			$up_interface.= '</a>';
+			$up_interface.='<div id="notify_changes_user_preferences" style="display:none">';
 			$up_interface.='<div>';
-			$up_interface.="<input type='checkbox' name='notify_by_email' value='1' $mail_notification_status />";
-			$up_interface.= get_string('notify_by_email', 'block_notify_changes');
+			$up_interface.= get_string('user_preference_header', 'block_notify_changes');
 			$up_interface.='</div>';
-		}
-		if ( class_exists('SMS') and $CFG->block_notify_changes_sms_channel == 1 and $course_registration->notify_by_sms == 1 ) {
-			$up_interface.='<div>';
-			$up_interface.="<input type='checkbox' name='notify_by_sms' value='1' $sms_notification_status />";
-			$up_interface.= get_string('notify_by_sms', 'block_notify_changes');
+			$up_interface.='<form id="user_preferences">';
+			$up_interface.='<input type="hidden" name="user_id" value="'.$USER->id.'" />';
+			$up_interface.='<input type="hidden" name="course_id" value="'.$COURSE->id.'" />';
+			if ( $CFG->block_notify_changes_email_channel == 1 and $course_registration->notify_by_email == 1 ) {
+				$up_interface.='<div>';
+				$up_interface.="<input type='checkbox' name='notify_by_email' value='1' $mail_notification_status />";
+				$up_interface.= get_string('notify_by_email', 'block_notify_changes');
+				$up_interface.='</div>';
+			}
+			if ( class_exists('SMS') and $CFG->block_notify_changes_sms_channel == 1 and $course_registration->notify_by_sms == 1 ) {
+				$up_interface.='<div>';
+				$up_interface.="<input type='checkbox' name='notify_by_sms' value='1' $sms_notification_status />";
+				$up_interface.= get_string('notify_by_sms', 'block_notify_changes');
+				$up_interface.='</div>';
+			}
+			$up_interface.='</form>';
+			$up_interface.='<input type="button" name="save_user_preferences" value="Save" onclick="save_user_preferences()" />';
+			$up_interface.='<input type="button" name="cancel" value="Cancel" onclick="hide_user_preferences_panel()" />';
 			$up_interface.='</div>';
+			$up_interface.='</div>';
+			return $up_interface;
 		}
-		$up_interface.='</form>';
-		$up_interface.='<input type="button" name="save_user_preferences" value="Save" onclick="save_user_preferences()" />';
-		$up_interface.='<input type="button" name="cancel" value="Cancel" onclick="hide_user_preferences_panel()" />';
-		$up_interface.='</div>';
-		$up_interface.='</div>';
-		return $up_interface;
 		/*
 		*/
 	}
@@ -143,13 +161,18 @@ class block_notify_changes extends block_base {
 		$course_registration = $Course->get_registration($COURSE->id);
 		//print_r($Course->get_recent_activities($COURSE->id));
 		//$User = new User();
+		//print_r($User);
+		//print_r( $User->get_preferences($USER->id, $COURSE->id) );
+		//$this->content->text += $User->get_preferences($USER->id, $COURSE->id);
 		//print_r($User->get_all_users_enrolled_in_the_course($COURSE->id));
 		if ( 
 			( $CFG->block_notify_changes_email_channel != 1 and $CFG->block_notify_changes_sms_channel != 1 and $CFG->block_notify_changes_rss_channel != 1) or
 			( $course_registration->notify_by_email == 0 and $course_registration->notify_by_sms == 0 and $course_registration->notify_by_rss == 0 )
-		)
+		){
+
 			$this->content->text =  get_string('configuration_comment', 'block_notify_changes');
-		else {
+
+		} else {
 			// last notification info
 			$this->content->text = "<span style='font-size: 12px'>";
 			$this->content->text.= get_string('last_notification', 'block_notify_changes');
@@ -222,7 +245,7 @@ function cron() {
 		
 		foreach($courses as $course) {
 			// if course is not visible then skip
-			if ( $course->visible == 0 ) continue;
+			if ( $course->visible == 0 ) { continue; }
 
 			// if the course has not been registered so far then register
 			echo "\n--> Processing course: $course->fullname";
@@ -270,7 +293,7 @@ function cron() {
 			$changelist = $Course->get_recent_activities($course->id); 
 			// update the last notification time
 			$Course->update_last_notification_time($course->id, time());
-			if( empty($changelist) ) continue; // check the next course. No new items in this one.
+			if( empty($changelist) ) { continue; } // check the next course. No new items in this one.
 
 
 			foreach($enrolled_users as $user) {
