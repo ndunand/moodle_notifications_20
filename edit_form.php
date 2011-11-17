@@ -10,6 +10,7 @@ class block_moodle_notifications_edit_form extends block_edit_form {
 
 		$attributes = array();
 		$attributes['disabled'] = 'disabled';
+		$attributes['group'] = 'moodle_notifications_settings';
 
 		if( $CFG->block_moodle_notifications_email_channel == 1 ) {
         	$mform->addElement( 'checkbox', 'notify_by_email', get_string('notify_by_email', 'block_moodle_notifications') );
