@@ -45,10 +45,10 @@ class SMS extends AbstractSMS {
 		$smsbody = "";
 		if( count($added) > 0 ) {
 			// added items
-			$smsbody .= get_string( 'added', 'block_notify_changes' ).': ';
+			$smsbody .= get_string( 'added', 'block_moodle_notifications' ).': ';
 			foreach ( $added as $module => $number ) {
 				$smsbody .= $number.' ';
-				$smsbody .= get_string($module, 'block_notify_changes').', ';
+				$smsbody .= get_string($module, 'block_moodle_notifications').', ';
 			}
 			// remove the last coma symbol
 			$smsbody = substr( $smsbody, 0, -2 );
@@ -56,10 +56,10 @@ class SMS extends AbstractSMS {
 
 		if( count($updated) > 0 ) {
 			// added items
-			$smsbody .= get_string( 'updated', 'block_notify_changes' ).': ';
+			$smsbody .= get_string( 'updated', 'block_moodle_notifications' ).': ';
 			foreach ( $updated as $module => $number ) {
 				$smsbody .= $number.' ';
-				$smsbody .= get_string( $module, 'block_notify_changes' ).', ';
+				$smsbody .= get_string( $module, 'block_moodle_notifications' ).', ';
 			}
 			// remove the last come symbol
 			$smsbody = substr( $smsbody, 0, -2 );
@@ -67,10 +67,10 @@ class SMS extends AbstractSMS {
 
 		if( count($deleted) > 0 ) {
 			// added items
-			$smsbody .= get_string( 'deleted', 'block_notify_changes' ).': ';
+			$smsbody .= get_string( 'deleted', 'block_moodle_notifications' ).': ';
 			foreach ( $deleted as $module => $number ) {
 				$smsbody .= $number.' ';
-				$smsbody .= get_string( $module, 'block_notify_changes' ).', ';
+				$smsbody .= get_string( $module, 'block_moodle_notifications' ).', ';
 			}
 			// remove the last come symbol
 			$smsbody = substr( $smsbody, 0, -2 );
@@ -79,7 +79,7 @@ class SMS extends AbstractSMS {
 		return $smsbody;
 	}
 
-	public function notify_changes( $changelist, $user, $course ) {
+	public function notify( $changelist, $user, $course ) {
 		$message_size = 160; // 160 chars 
 		$course_shortname_limit = 10;
 		$subject_overhead = ' () '; // space()space -> overhead of 4 chars in the subject

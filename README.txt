@@ -1,10 +1,10 @@
 ****************************************************************
-* Tue Feb  1 11:03:42 CET 2011
+* Thu Nov 17 11:16:44 CET 2011
 * Goran Josic goran.josic@usi.ch
 * eLab - http://www.elearninglab.org
 ****************************************************************
 
-Thank you for using notify_changes plugin. 
+Thank you for using moodle_notifications plugin. 
 
 About: 
 This plugin notifies changes and updates on Moodle courses via
@@ -21,7 +21,7 @@ point.
 Installation:
 Before you start the installation please read the instructions. 
 	
-	1.	rename the plugin folder to notify_changes if you have
+	1.	rename the plugin folder to moodle_notifications if you have
 		chosen a different name during the repository cloning
 
 	2.	move the folder to the blocks directory of your Moodle
@@ -50,4 +50,4 @@ If you find a bug please submit it here:
 http://sourceforge.net/tracker/?func=add&group_id=398313&atid=1652206
 
 Please provide the bug description and don't forget Moodle and 
-notify_changes plugin version.
+moodle_notifications plugin version.

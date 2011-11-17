@@ -10,8 +10,8 @@ class RSS {
 		$Course = new Course();
 		// if the course is not registered or
 		// the course is registered but the block is not active
-		//if( !$Course->is_registered($course_id) or !$Course->uses_notify_changes_block($course_id) ) {
-		if( !$Course->is_registered($course_id) or !$Course->uses_notify_changes_block($course_id) ) {
+		//if( !$Course->is_registered($course_id) or !$Course->uses_moodle_notifications_block($course_id) ) {
+		if( !$Course->is_registered($course_id) or !$Course->uses_moodle_notifications_block($course_id) ) {
 			echo "RSS on this course is not enabled.";
 			return;
 		}
@@ -50,7 +50,7 @@ class RSS {
 
 		foreach( $logs as $log ) {
 			$output .= "<item>";
-			$output .= '<title>'.get_string($log->type, 'block_notify_changes').'</title>';
+			$output .= '<title>'.get_string($log->type, 'block_moodle_notifications').'</title>';
 			if($log->action == 'deleted')
 				$output .= "<link></link>";
 			else
@@ -59,16 +59,16 @@ class RSS {
 			$output .= "<description>";
 			switch( $log->action ) {
 				case 'added':	
-					$output .= get_string('added', 'block_notify_changes').' ';
+					$output .= get_string('added', 'block_moodle_notifications').' ';
 					break;
 				case 'updated':	
-					$output .= get_string('updated', 'block_notify_changes').' ';
+					$output .= get_string('updated', 'block_moodle_notifications').' ';
 					break;
 				case 'deleted':	
-					$output .= get_string('deleted', 'block_notify_changes').' ';
+					$output .= get_string('deleted', 'block_moodle_notifications').' ';
 					break;
 			}
-			$output .= get_string( $log->type, 'block_notify_changes' ).': ';
+			$output .= get_string( $log->type, 'block_moodle_notifications' ).': ';
 			$output .= $log->name;
 			$output .= "</description>";
 			$output .= "</item>";

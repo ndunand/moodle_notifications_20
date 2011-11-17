@@ -34,7 +34,7 @@ class User {
 
 
 	// this function initializes the global user preferences for the current course
-	// a new user is enrolled in the course that uses notify_changes block 
+	// a new user is enrolled in the course that uses moodle_notifications block 
 	function initialize_preferences( $user_id, $course_id, $notify_by_email, $notify_by_sms ) {
 		global $DB;
 		$user_preferences = new Object();	
@@ -42,7 +42,7 @@ class User {
 		$user_preferences->course_id = $course_id;
 		$user_preferences->notify_by_email = $notify_by_email;
 		$user_preferences->notify_by_sms = $notify_by_sms;
-		return $DB->insert_record( 'block_notify_changes_users', $user_preferences );
+		return $DB->insert_record( 'block_moodle_notifications_users', $user_preferences );
 	}
 
 	function update_preferences( $user_id, $course_id, $notify_by_email, $notify_by_sms ) {
@@ -54,12 +54,12 @@ class User {
 		$user_preferences->course_id = $course_id;
 		$user_preferences->notify_by_email = $notify_by_email;
 		$user_preferences->notify_by_sms = $notify_by_sms;
-		return $DB->update_record( 'block_notify_changes_users', $user_preferences );
+		return $DB->update_record( 'block_moodle_notifications_users', $user_preferences );
 	}
 
 	function get_preferences( $user_id, $course_id ) {
 		global $DB;
-		$user_preferences = $DB->get_records_select( 'block_notify_changes_users', "course_id=$course_id and user_id=$user_id" ); 
+		$user_preferences = $DB->get_records_select( 'block_moodle_notifications_users', "course_id=$course_id and user_id=$user_id" ); 
 		if( !empty($user_preferences) && is_array($user_preferences) ) {
 			return current( $user_preferences );
 		} else {
@@ -72,8 +72,8 @@ class User {
 		global $CFG, $DB;
 		$course_list = "(select id from {$CFG->prefix}course)";
 		$deleted_users_list = "(select id from {$CFG->prefix}user where deleted=1)";
-		$DB->execute( "delete from {$CFG->prefix}block_notify_changes_users where course_id not in $course_list" );
-		$DB->execute( "delete from {$CFG->prefix}block_notify_changes_users where user_id in $deleted_users_list" );
+		$DB->execute( "delete from {$CFG->prefix}block_moodle_notifications_users where course_id not in $course_list" );
+		$DB->execute( "delete from {$CFG->prefix}block_moodle_notifications_users where user_id in $deleted_users_list" );
 	}
 }
 ?>

@@ -7,16 +7,16 @@ defined( 'MOODLE_INTERNAL' ) || die;
 global $CFG;
 
 if ( $ADMIN->fulltree ) {
-	$settings->add( new admin_setting_heading('block_notify_changes_settings', '', get_string('global_configuration_comment', 'block_notify_changes')) );
-	$settings->add( new admin_setting_configcheckbox('block_notify_changes_email_channel', get_string('email', 'block_notify_changes'), '', 1) );
+	$settings->add( new admin_setting_heading('block_moodle_notifications_settings', '', get_string('global_configuration_comment', 'block_moodle_notifications')) );
+	$settings->add( new admin_setting_configcheckbox('block_moodle_notifications_email_channel', get_string('email', 'block_moodle_notifications'), '', 1) );
 
 	if( class_exists('SMS') ) {
-		$settings->add( new admin_setting_configcheckbox('block_notify_changes_sms_channel', get_string('sms', 'block_notify_changes'), '', 1) );
+		$settings->add( new admin_setting_configcheckbox('block_moodle_notifications_sms_channel', get_string('sms', 'block_moodle_notifications'), '', 1) );
 	} else {
-		$settings->add( new admin_setting_configcheckbox('block_notify_changes_sms_channel', get_string('sms', 'block_notify_changes'),  get_string('sms_class_not_implemented', 'block_notify_changes'), 0) );
+		$settings->add( new admin_setting_configcheckbox('block_moodle_notifications_sms_channel', get_string('sms', 'block_moodle_notifications'),  get_string('sms_class_not_implemented', 'block_moodle_notifications'), 0) );
 	}
 
-	$settings->add( new admin_setting_configcheckbox('block_notify_changes_rss_channel', get_string('rss', 'block_notify_changes'), '', 1) );
+	$settings->add( new admin_setting_configcheckbox('block_moodle_notifications_rss_channel', get_string('rss', 'block_moodle_notifications'), '', 1) );
 	$options = array();
 
 	for( $i=1; $i<25; ++$i ) {
@@ -24,12 +24,12 @@ if ( $ADMIN->fulltree ) {
 	}
 
 	$default = 12;
-	if( isset($CFG->block_notify_changes_frequency) ) {
-		$default = $CFG->block_notify_changes_frequency;
+	if( isset($CFG->block_moodle_notifications_frequency) ) {
+		$default = $CFG->block_moodle_notifications_frequency;
 	}
 
-    $settings->add( new admin_setting_configselect('block_notify_changes_frequency', 
-													get_string('notification_frequency', 'block_notify_changes'), 
-													get_string('notification_frequency_comment', 'block_notify_changes'), $default , $options) );
+    $settings->add( new admin_setting_configselect('block_moodle_notifications_frequency', 
+													get_string('notification_frequency', 'block_moodle_notifications'), 
+													get_string('notification_frequency_comment', 'block_moodle_notifications'), $default , $options) );
 }
 

@@ -1,5 +1,5 @@
 <?php
-class block_notify_changes_edit_form extends block_edit_form {
+class block_moodle_notifications_edit_form extends block_edit_form {
     protected function specific_definition( $mform ) {
 		global $CFG;
 		global $COURSE;
@@ -11,30 +11,30 @@ class block_notify_changes_edit_form extends block_edit_form {
 		$attributes = array();
 		$attributes['disabled'] = 'disabled';
 
-		if( $CFG->block_notify_changes_email_channel == 1 ) {
-        	$mform->addElement( 'checkbox', 'notify_by_email', get_string('notify_by_email', 'block_notify_changes') );
+		if( $CFG->block_moodle_notifications_email_channel == 1 ) {
+        	$mform->addElement( 'checkbox', 'notify_by_email', get_string('notify_by_email', 'block_moodle_notifications') );
 		} else {
-        	$mform->addElement( 'advcheckbox', 'notify_by_email', get_string('notify_by_email', 'block_notify_changes'), null, $attributes );
+        	$mform->addElement( 'advcheckbox', 'notify_by_email', get_string('notify_by_email', 'block_moodle_notifications'), null, $attributes );
 		}
 
 		if ( isset($course_notification_setting->notify_by_email) and $course_notification_setting->notify_by_email == 1 ) {
         	$mform->setDefault( 'notify_by_email', 1 );
 		}
 
-		if( $CFG->block_notify_changes_sms_channel == 1 and class_exists('SMS') ) {
-        	$mform->addElement( 'checkbox', 'notify_by_sms', get_string('notify_by_sms', 'block_notify_changes') );
+		if( $CFG->block_moodle_notifications_sms_channel == 1 and class_exists('SMS') ) {
+        	$mform->addElement( 'checkbox', 'notify_by_sms', get_string('notify_by_sms', 'block_moodle_notifications') );
 		} else {
-        	$mform->addElement( 'advcheckbox', 'notify_by_sms', get_string('notify_by_sms', 'block_notify_changes'), null, $attributes );
+        	$mform->addElement( 'advcheckbox', 'notify_by_sms', get_string('notify_by_sms', 'block_moodle_notifications'), null, $attributes );
 		}
 
 		if ( isset($course_notification_setting->notify_by_sms) and $course_notification_setting->notify_by_sms == 1 ) {
         	$mform->setDefault( 'notify_by_sms', 1 );
 		}
 
-		if( $CFG->block_notify_changes_rss_channel == 1 ) {
-        	$mform->addElement( 'checkbox', 'notify_by_rss', get_string('notify_by_rss', 'block_notify_changes') );
+		if( $CFG->block_moodle_notifications_rss_channel == 1 ) {
+        	$mform->addElement( 'checkbox', 'notify_by_rss', get_string('notify_by_rss', 'block_moodle_notifications') );
 		} else {
-        	$mform->addElement( 'advcheckbox', 'notify_by_rss', get_string('notify_by_rss', 'block_notify_changes'), null, $attributes );
+        	$mform->addElement( 'advcheckbox', 'notify_by_rss', get_string('notify_by_rss', 'block_moodle_notifications'), null, $attributes );
 		}
 
 		if ( isset($course_notification_setting->notify_by_rss) and $course_notification_setting->notify_by_rss == 1 ) {
@@ -42,14 +42,14 @@ class block_notify_changes_edit_form extends block_edit_form {
 		}
 
 		if( 
-			$CFG->block_notify_changes_email_channel == 1 or 
-			$CFG->block_notify_changes_sms_channel == 1
+			$CFG->block_moodle_notifications_email_channel == 1 or 
+			$CFG->block_moodle_notifications_sms_channel == 1
 		) {
 	 		$options = array();
 			for( $i=1; $i<25; ++$i ) {
 				$options[$i] = $i;
 			}
-        	$mform->addElement( 'select', 'notification_frequency', get_string('notification_frequency', 'block_notify_changes'), $options );
+        	$mform->addElement( 'select', 'notification_frequency', get_string('notification_frequency', 'block_moodle_notifications'), $options );
         	$mform->setDefault( 'notification_frequency', $course_notification_setting->notification_frequency/3600 );
 		}
     }
