@@ -23,7 +23,9 @@ class block_moodle_notifications extends block_base {
 			"block_moodle_notifications_email_channel" => 1,
 			"block_moodle_notifications_sms_channel" => 1,
 			"block_moodle_notifications_rss_channel" => 1,
-			"block_moodle_notifications_frequency" => 12
+			"block_moodle_notifications_frequency" => 12,
+			"block_moodle_notifications_email_notification_preset" => 1,
+			"block_moodle_notifications_sms_notification_preset" => 1
 		);
 		return parent::config_save($global_config);
 	}
@@ -34,6 +36,8 @@ class block_moodle_notifications extends block_base {
 		unset($CFG->block_moodle_notifications_sms_channel);
 		unset($CFG->block_moodle_notifications_rss_channel);
 		unset($CFG->block_moodle_notifications_frequency);
+		unset($CFG->block_moodle_notifications_email_notification_preset);
+		unset($CFG->block_moodle_notifications_sms_notification_preset);
 		return true;
 	}
 
@@ -92,8 +96,8 @@ class block_moodle_notifications extends block_base {
 				$user_preferences = new Object();	
 				$user_preferences->user_id = $USER->id;
 				$user_preferences->course_id = $COURSE->id;
-				$user_preferences->notify_by_email = 1;
-				$user_preferences->notify_by_sms = 1;
+				$user_preferences->notify_by_email = $course_registration->email_notification_preset;
+				$user_preferences->notify_by_sms = $course_registration->sms_notification_preset;
 				$User->initialize_preferences(	$user_preferences->user_id, 
 												$user_preferences->course_id, 
 												$user_preferences->notify_by_email, 
@@ -266,8 +270,8 @@ function cron() {
 					$user_preferences = new Object();	
 					$user_preferences->user_id = $user->id;
 					$user_preferences->course_id = $course->id;
-					$user_preferences->notify_by_email = 1;
-					$user_preferences->notify_by_sms = 1;
+					$user_preferences->notify_by_email = $course_registration->email_notification_preset;
+					$user_preferences->notify_by_sms = $course_registration->sms_notification_preset;
 					$User->initialize_preferences(	$user_preferences->user_id, 
 													$user_preferences->course_id, 
 													$user_preferences->notify_by_email, 

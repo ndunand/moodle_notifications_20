@@ -12,7 +12,9 @@
         <FIELD NAME="notify_by_email" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables notification by email" PREVIOUS="last_notification_time" NEXT="notify_by_sms"/>
         <FIELD NAME="notify_by_sms" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables notification by sms" PREVIOUS="notify_by_email" NEXT="notify_by_rss"/>
         <FIELD NAME="notify_by_rss" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Enables RSS notification" PREVIOUS="notify_by_sms" NEXT="notification_frequency"/>
-        <FIELD NAME="notification_frequency" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="43200" SEQUENCE="false" ENUM="false" PREVIOUS="notify_by_rss"/>
+        <FIELD NAME="notification_frequency" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="43200" SEQUENCE="false" ENUM="false" PREVIOUS="notify_by_rss" NEXT="email_notification_preset"/>
+        <FIELD NAME="email_notification_preset" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="User preset for the email notification channel" PREVIOUS="notification_frequency" NEXT="sms_notification_preset"/>
+        <FIELD NAME="sms_notification_preset" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="User preset for the email notification channel" PREVIOUS="email_notification_preset" />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

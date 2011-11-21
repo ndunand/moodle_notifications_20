@@ -20,6 +20,18 @@ class Course {
 			$course->notification_frequency = 12 * 3600;
 		}
 
+		if ( isset($CFG->block_moodle_notifications_email_notification_preset) ) {
+			$course->email_notification_preset = $CFG->block_moodle_notifications_email_notification_preset;
+		} else {
+			$course->email_notification_preset = 1;
+		}
+
+		if ( isset($CFG->block_moodle_notifications_sms_notification_preset) ) {
+			$course->sms_notification_preset = $CFG->block_moodle_notifications_sms_notification_preset;
+		} else {
+			$course->sms_notification_preset = 1;
+		}
+
 		return $DB->insert_record( 'block_moodle_notifications_courses', $course );
 	}
 
@@ -54,6 +66,12 @@ class Course {
 		if( isset($settings->notification_frequency) ) {
 			$course->notification_frequency = $settings->notification_frequency % 25 * 3600;
 		}
+
+		$course->email_notification_preset = 0;
+		if( isset($settings->email_notification_preset) and $settings->email_notification_preset == 1 ) { $course->email_notification_preset = 1; }
+
+		$course->sms_notification_preset = 0;
+		if( isset($settings->sms_notification_preset) and $settings->sms_notification_preset == 1 ) { $course->sms_notification_preset = 1; }
 
 		return $DB->update_record('block_moodle_notifications_courses', $course);
 	}

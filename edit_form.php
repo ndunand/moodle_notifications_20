@@ -3,6 +3,7 @@ class block_moodle_notifications_edit_form extends block_edit_form {
     protected function specific_definition( $mform ) {
 		global $CFG;
 		global $COURSE;
+
 		$Course = new Course();
 		$course_notification_setting = $Course->get_registration( $COURSE->id );
         // Fields for editing HTML block title and contents.
@@ -53,6 +54,23 @@ class block_moodle_notifications_edit_form extends block_edit_form {
         	$mform->addElement( 'select', 'notification_frequency', get_string('notification_frequency', 'block_moodle_notifications'), $options );
         	$mform->setDefault( 'notification_frequency', $course_notification_setting->notification_frequency/3600 );
 		}
+
+
+        $mform->addElement( 'html', '<br /><div class="qheader">'.get_string('course_configuration_presets_comment', 'block_moodle_notifications').'</div>' );
+
+        $mform->addElement( 'checkbox', 'email_notification_preset', get_string('email_notification_preset', 'block_moodle_notifications') );
+		if ( isset($course_notification_setting->email_notification_preset) and $course_notification_setting->email_notification_preset == 1 ) {
+        	$mform->setDefault( 'email_notification_preset', 1 );
+		} else {
+        	$mform->setDefault( 'email_notification_preset', 0 );
+		}
+
+        $mform->addElement( 'checkbox', 'sms_notification_preset', get_string('sms_notification_preset', 'block_moodle_notifications') );
+		if ( isset($course_notification_setting->sms_notification_preset) and $course_notification_setting->sms_notification_preset == 1 ) {
+        	$mform->setDefault( 'sms_notification_preset', 1 );
+		} else {
+        	$mform->setDefault( 'sms_notification_preset', 0 );
+		}
     }
 
     function set_data( $defaults ) {
@@ -61,6 +79,8 @@ class block_moodle_notifications_edit_form extends block_edit_form {
 		$block_config->notify_by_sms = file_get_submitted_draft_itemid( 'notify_by_sms' );
 		$block_config->notify_by_rss = file_get_submitted_draft_itemid( 'notify_by_rss' );
 		$block_config->notification_frequency = file_get_submitted_draft_itemid( 'notification_frequency' );
+		$block_config->email_notification_preset = file_get_submitted_draft_itemid( 'email_notification_preset' );
+		$block_config->sms_notification_preset = file_get_submitted_draft_itemid( 'sms_notification_preset' );
         unset( $this->block->config->text );
 		parent::set_data( $defaults );
         $this->block->config = $block_config;

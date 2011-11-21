@@ -1,12 +1,22 @@
 <?php 
 include_once realpath( dirname( __FILE__ ).DIRECTORY_SEPARATOR ).DIRECTORY_SEPARATOR."common.php";
-print_header( get_string('help') );
-print_simple_box_start();
+global $PAGE, $COURSE, $OUTPUT;
+
+$url = new moodle_url('/blocks/moodle_notification/help.php', array('course'=>$COURSE->id));
+$PAGE->set_url($url);
+
+$context = get_context_instance(CONTEXT_SYSTEM);
+$PAGE->set_context($context);
+
+echo $OUTPUT->header();
 
 // print title
-echo '<h1>'.get_string( 'help_title', 'block_moodle_notifications' ).'</h1>';
+echo $OUTPUT->heading(get_string( 'help_title', 'block_moodle_notifications' ), 3, 'main');
+
+echo $OUTPUT->box_start('generalbox boxaligncenter');
 echo '<p>'.get_string( 'set_mobile_number_instructions', 'block_moodle_notifications' ).'</p>';
-print_simple_box_end();
-close_window_button();
-print_footer( 'none' );
+echo $OUTPUT->box_end();
+echo $OUTPUT->close_window_button();
+
+echo $OUTPUT->footer();
 ?>
