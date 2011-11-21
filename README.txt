@@ -47,7 +47,7 @@ Course level.
 
 Bugs:
 If you find a bug please submit it here:
-http://sourceforge.net/tracker/?func=add&group_id=398313&atid=1652206
+https://github.com/arael/moodle_notifications_20/issues
 
 Please provide the bug description and don't forget Moodle and 
 moodle_notifications plugin version.
