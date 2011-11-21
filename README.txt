@@ -45,6 +45,13 @@ The e-mail and sms channels can be enabled and disabled on
 every level. Only the rss channel is managed Globally or on
 Course level.
 
+Presets:
+You can set the default user channel preferences using presets.
+The presets can be enabled globally and on the course level.
+The course presets have precedence over the global presets.
+Finally, the user preferences have precedence over the course
+and global presets.
+
 Bugs:
 If you find a bug please submit it here:
 https://github.com/arael/moodle_notifications_20/issues
