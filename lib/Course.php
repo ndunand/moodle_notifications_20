@@ -259,7 +259,7 @@ class Course {
 
 	function get_logs( $course_id, $limit ){
 		global $DB, $CFG;
-		$entries = $DB->get_records_sql( "select * from {$CFG->prefix}block_moodle_notifications_log order by id desc limit $limit" );
+		$entries = $DB->get_records_sql( "select * from {$CFG->prefix}block_moodle_notifications_log where course_id=$course_id order by id desc limit $limit" );
 		if ( empty($entries) ) {
 			return null;	
 		} else {
