@@ -153,7 +153,15 @@ class Course {
 		$modinfo =& get_fast_modinfo($course);
 		foreach($modinfo->cms as $cms => $module) {
 			// skip labels, invisible modules and logged modules
-			if( $module->modname == 'label' or $module->visible == 0 or $this->is_module_logged($course->id, $module->id, $module->modname) ) continue;
+			
+			if( 
+				$module->modname == 'label' or 
+				$module->visible == 0 or 
+				( $module->available != 1 and $module->showavailability == 0 ) or
+				$this->is_module_logged($course->id, $module->id, $module->modname) 
+			) {
+				continue;
+			}
 
 			$new_record = new Object();
 			$new_record->course_id = $course->id;
@@ -162,8 +170,7 @@ class Course {
 			$new_record->type = $module->modname;
 			$new_record->action = 'added';
 			$new_record->status = 'pending';
-			// if the resource is not visible than
-			// mark it as pending and then notify once it is made visible
+
 			$DB->insert_record( 'block_moodle_notifications_log', $new_record );
 		}
 		// update records
@@ -208,7 +215,12 @@ class Course {
 		// add new records
 		foreach( $modinfo->cms as $cms => $module ) {
 			// filter labels and invisible modules
-			if( $module->modname == 'label' or $module->visible == 0 ) { continue; }
+			if( 
+				$module->modname == 'label' or 
+				$module->visible == 0 or 
+				( $module->available != 1 and $module->showavailability == 0 )
+			) {
+				continue; }
 
 			$new_record = new Object();
 			$new_record->course_id = $course->id;
@@ -217,9 +229,7 @@ class Course {
 			$new_record->type = $module->modname;
 			$new_record->action = 'added';
 			$new_record->status = 'notified';
-			// if the resource is not visible than
-			// mark it as pending and then notify once it is made visible
-			if( $module->visible == '0' ) { $new_record->status = 'pending'; }
+			
 			$DB->insert_record( 'block_moodle_notifications_log', $new_record );
 		}
 	}

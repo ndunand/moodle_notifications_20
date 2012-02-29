@@ -114,34 +114,34 @@ class block_moodle_notifications extends block_base {
 			//user preferences interface
 			$up_interface ="<script src='$CFG->wwwroot/blocks/moodle_notifications/js/jquery-1.4.3.js' type='text/javascript'></script>";
 			$up_interface.="<script src='$CFG->wwwroot/blocks/moodle_notifications/js/user_preferences_interface.php' type='text/javascript'></script>";
-			$up_interface.='<div id="moodle_notifications_config_preferences">';
+			$up_interface.='<div id="moodle_notifications_config_preferences">'; // main div
 			$up_interface.='<a id="moodle_notifications_user_preferences_trigger" href="#" onclick="show_user_preferences_panel()">';
 			$up_interface.= get_string('user_preference_settings', 'block_moodle_notifications');
 			$up_interface.= '</a>';
-			$up_interface.='<div id="moodle_notifications_user_preferences" style="display:none">';
-			$up_interface.='<div>';
+			$up_interface.='<div id="moodle_notifications_user_preferences" style="display:none">';// div a
+			$up_interface.='<div>'; // div b
 			$up_interface.= get_string('user_preference_header', 'block_moodle_notifications');
-			$up_interface.='</div>';
-			$up_interface.='<form id="user_preferences">';
+			$up_interface.='</div>'; // div b end
+			$up_interface.='<form id="user_preferences" action="">';
 			$up_interface.='<input type="hidden" name="user_id" value="'.$USER->id.'" />';
 			$up_interface.='<input type="hidden" name="course_id" value="'.$COURSE->id.'" />';
 			if ( $CFG->block_moodle_notifications_email_channel == 1 and $course_registration->notify_by_email == 1 ) {
-				$up_interface.='<div>';
+				$up_interface.='<div>'; // div c
 				$up_interface.="<input type='checkbox' name='notify_by_email' value='1' $mail_notification_status />";
 				$up_interface.= get_string('notify_by_email', 'block_moodle_notifications');
-				$up_interface.='</div>';
+				$up_interface.='</div>'; // div c end
 			}
 			if ( class_exists('SMS') and $CFG->block_moodle_notifications_sms_channel == 1 and $course_registration->notify_by_sms == 1 ) {
-				$up_interface.='<div>';
+				$up_interface.='<div>'; // div d end
 				$up_interface.="<input type='checkbox' name='notify_by_sms' value='1' $sms_notification_status />";
 				$up_interface.= get_string('notify_by_sms', 'block_moodle_notifications');
-				$up_interface.='</div>';
+				$up_interface.='</div>'; // div d end
 			}
 			$up_interface.='</form>';
 			$up_interface.='<input type="button" name="save_user_preferences" value="Save" onclick="save_user_preferences()" />';
 			$up_interface.='<input type="button" name="cancel" value="Cancel" onclick="hide_user_preferences_panel()" />';
-			$up_interface.='</div>';
-			$up_interface.='</div>';
+			$up_interface.='</div>'; // div a end
+			$up_interface.='</div>'; // main div end
 			return $up_interface;
 		}
 		/*
@@ -181,7 +181,7 @@ class block_moodle_notifications extends block_base {
 			$this->content->text = "<span style='font-size: 12px'>";
 			$this->content->text.= get_string('last_notification', 'block_moodle_notifications');
 			$this->content->text.= ": ".date("j M Y G:i:s",$course_registration->last_notification_time);
-			$this->content->text.= "<span /><br />";
+			$this->content->text.= "</span><br />";
 
 			if ( $CFG->block_moodle_notifications_email_channel == 1 and $course_registration->notify_by_email == 1 ) {
 				$this->content->text.= "<img src='$CFG->wwwroot/blocks/moodle_notifications/images/Mail-icon.png' ";
