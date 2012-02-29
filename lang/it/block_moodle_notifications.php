@@ -50,7 +50,12 @@ $string['resource'] = 'Risorsa';
 $string['workshop'] = 'Workshop';
 $string['quizport'] = 'Quizport';
 $string['checklist'] = 'Checklist';
-// help 
+// HELP 
 $string['help_title'] = 'Impostare il numero di celluare';
 $string['set_mobile_number_instructions'] = "Andare sulla pagina del corso e cliccare sul proprio nome nell'angolo in alto a destra. Scegliere la voce Modifica. Scorrere la pagina fino in fondo e immettere il proprio numero di cellulare nel campo Cellulare. Cliccare su Aggiornamento Profilo per salvare.";
+
+//UTILITY 
+$string['rss_empty_title'] = 'RSS vuoto';
+$string['rss_empty_description'] = 'Questo RSS &egrave; vuoto. Attendere che la piattaforma scansioni il contenuto del corso.';
+$string['rss_not_enabled'] = 'RSS non abilitato su questo corso.';
 ?>

@@ -12,7 +12,7 @@ class RSS {
 		// the course is registered but the block is not active
 		//if( !$Course->is_registered($course_id) or !$Course->uses_moodle_notifications_block($course_id) ) {
 		if( !$Course->is_registered($course_id) or !$Course->uses_moodle_notifications_block($course_id) ) {
-			echo "RSS on this course is not enabled.";
+			echo get_string('rss_not_enabled', 'block_moodle_notifications');
 			return;
 		}
 		$User = new User();
@@ -48,30 +48,37 @@ class RSS {
 
 		$logs = $Course->get_logs( $course_id, 20 );
 
-		foreach( $logs as $log ) {
+		if( !isset($logs) or !is_array($logs) or count($logs) == 0 ) {
 			$output .= "<item>";
-			$output .= '<title>'.get_string($log->type, 'block_moodle_notifications').'</title>';
-			if($log->action == 'deleted')
-				$output .= "<link></link>";
-			else
-				$output .= "<link>$CFG->wwwroot/mod/$log->type/view.php?id=$log->module_id</link>";
-
-			$output .= "<description>";
-			switch( $log->action ) {
-				case 'added':	
-					$output .= get_string('added', 'block_moodle_notifications').' ';
-					break;
-				case 'updated':	
-					$output .= get_string('updated', 'block_moodle_notifications').' ';
-					break;
-				case 'deleted':	
-					$output .= get_string('deleted', 'block_moodle_notifications').' ';
-					break;
-			}
-			$output .= get_string( $log->type, 'block_moodle_notifications' ).': ';
-			$output .= $log->name;
-			$output .= "</description>";
+			$output .= '<title>'.get_string('rss_empty_title', 'block_moodle_notifications').'</title>';
+			$output .= '<description>'.get_string('rss_empty_description', 'block_moodle_notifications').'</description>';
 			$output .= "</item>";
+		} else {
+			foreach( $logs as $log ) {
+				$output .= "<item>";
+				$output .= '<title>'.get_string($log->type, 'block_moodle_notifications').'</title>';
+				if($log->action == 'deleted')
+					$output .= "<link></link>";
+				else
+					$output .= "<link>$CFG->wwwroot/mod/$log->type/view.php?id=$log->module_id</link>";
+
+				$output .= "<description>";
+				switch( $log->action ) {
+					case 'added':	
+						$output .= get_string('added', 'block_moodle_notifications').' ';
+						break;
+					case 'updated':	
+						$output .= get_string('updated', 'block_moodle_notifications').' ';
+						break;
+					case 'deleted':	
+						$output .= get_string('deleted', 'block_moodle_notifications').' ';
+						break;
+				}
+				$output .= get_string( $log->type, 'block_moodle_notifications' ).': ';
+				$output .= $log->name;
+				$output .= "</description>";
+				$output .= "</item>";
+			}
 		}
 		$output .= "</channel></rss>";
 		header("Content-Type: application/rss+xml");
