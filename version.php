@@ -1,5 +1,5 @@
 <?php
-$plugin->component  = 'block_moodle_notifications';
+$plugin->component  = 'block_notifications';
 $plugin->version  = 2012022901;
 $plugin->release  = 4;
 $plugin->requires  =2011033003;

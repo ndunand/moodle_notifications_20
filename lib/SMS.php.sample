@@ -1,8 +1,8 @@
 <?php
 require_once LIB_DIR.DIRECTORY_SEPARATOR."AbstractSMS.php";
-//***************************************************	
+//***************************************************
 // SMS notification abstract class
-//***************************************************	
+//***************************************************
 class SMS extends AbstractSMS {
 //class SMS {
 
@@ -16,7 +16,7 @@ class SMS extends AbstractSMS {
 
 		foreach( $changelist as $entry ) {
 			switch( $entry->action ) {
-				case "added":	
+				case "added":
 
 					if( array_key_exists($entry->type, $added) ) {
 						$added[$entry->type] += 1;
@@ -25,7 +25,7 @@ class SMS extends AbstractSMS {
 					}
 					break;
 
-				case "updated":	
+				case "updated":
 					if( array_key_exists($entry->type, $updated) ) {
 						$updated[$entry->type] += 1;
 					} else {
@@ -33,7 +33,7 @@ class SMS extends AbstractSMS {
 					}
 					break;
 
-				case "deleted":	
+				case "deleted":
 					if(array_key_exists($entry->type, $deleted))
 						$deleted[$entry->type] += 1;
 					else
@@ -45,10 +45,10 @@ class SMS extends AbstractSMS {
 		$smsbody = "";
 		if( count($added) > 0 ) {
 			// added items
-			$smsbody .= get_string( 'added', 'block_moodle_notifications' ).': ';
+			$smsbody .= get_string( 'added', 'block_notifications' ).': ';
 			foreach ( $added as $module => $number ) {
 				$smsbody .= $number.' ';
-				$smsbody .= get_string($module, 'block_moodle_notifications').', ';
+				$smsbody .= get_string($module, 'block_notifications').', ';
 			}
 			// remove the last coma symbol
 			$smsbody = substr( $smsbody, 0, -2 );
@@ -56,10 +56,10 @@ class SMS extends AbstractSMS {
 
 		if( count($updated) > 0 ) {
 			// added items
-			$smsbody .= get_string( 'updated', 'block_moodle_notifications' ).': ';
+			$smsbody .= get_string( 'updated', 'block_notifications' ).': ';
 			foreach ( $updated as $module => $number ) {
 				$smsbody .= $number.' ';
-				$smsbody .= get_string( $module, 'block_moodle_notifications' ).', ';
+				$smsbody .= get_string( $module, 'block_notifications' ).', ';
 			}
 			// remove the last come symbol
 			$smsbody = substr( $smsbody, 0, -2 );
@@ -67,10 +67,10 @@ class SMS extends AbstractSMS {
 
 		if( count($deleted) > 0 ) {
 			// added items
-			$smsbody .= get_string( 'deleted', 'block_moodle_notifications' ).': ';
+			$smsbody .= get_string( 'deleted', 'block_notifications' ).': ';
 			foreach ( $deleted as $module => $number ) {
 				$smsbody .= $number.' ';
-				$smsbody .= get_string( $module, 'block_moodle_notifications' ).', ';
+				$smsbody .= get_string( $module, 'block_notifications' ).', ';
 			}
 			// remove the last come symbol
 			$smsbody = substr( $smsbody, 0, -2 );
@@ -80,7 +80,7 @@ class SMS extends AbstractSMS {
 	}
 
 	public function notify( $changelist, $user, $course ) {
-		$message_size = 160; // 160 chars 
+		$message_size = 160; // 160 chars
 		$course_shortname_limit = 10;
 		$subject_overhead = ' () '; // space()space -> overhead of 4 chars in the subject
 		$from = 'elab@usi.ch';
@@ -100,7 +100,7 @@ class SMS extends AbstractSMS {
 			$proper_size = $message_size - strlen($from . $subject_overhead . $subject) - 3;
 			$smsmessage = substr($smsmessage, 0, $proper_size) . '...';
 		}
-		
+
 		/*
 		echo '<br />';
 		echo "$from\n\n";
@@ -128,7 +128,7 @@ class SMS extends AbstractSMS {
 			}
 		} else {
 			if ( !empty($mail->SMTPDebug) ) {
-				echo '</pre>';                  
+				echo '</pre>';
 			}
 			//Send Error
 			return $mail->ErrorInfo;

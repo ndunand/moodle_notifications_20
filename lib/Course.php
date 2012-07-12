@@ -1,7 +1,7 @@
-<?php 
-//***************************************************	
+<?php
+//***************************************************
 // Course registration management
-//***************************************************	
+//***************************************************
 class Course {
 
 	function register( $course_id, $starting_time ) {
@@ -14,25 +14,25 @@ class Course {
 		$course->notify_by_email = 1;
 		$course->notify_by_sms = 1;
 		$course->notify_by_rss = 1;
-		if( isset($CFG->block_moodle_notifications_frequency) ) {
-			$course->notification_frequency = $CFG->block_moodle_notifications_frequency * 3600;
+		if( isset($CFG->block_notifications_frequency) ) {
+			$course->notification_frequency = $CFG->block_notifications_frequency * 3600;
 		} else {
 			$course->notification_frequency = 12 * 3600;
 		}
 
-		if ( isset($CFG->block_moodle_notifications_email_notification_preset) ) {
-			$course->email_notification_preset = $CFG->block_moodle_notifications_email_notification_preset;
+		if ( isset($CFG->block_notifications_email_notification_preset) ) {
+			$course->email_notification_preset = $CFG->block_notifications_email_notification_preset;
 		} else {
 			$course->email_notification_preset = 1;
 		}
 
-		if ( isset($CFG->block_moodle_notifications_sms_notification_preset) ) {
-			$course->sms_notification_preset = $CFG->block_moodle_notifications_sms_notification_preset;
+		if ( isset($CFG->block_notifications_sms_notification_preset) ) {
+			$course->sms_notification_preset = $CFG->block_notifications_sms_notification_preset;
 		} else {
 			$course->sms_notification_preset = 1;
 		}
 
-		return $DB->insert_record( 'block_moodle_notifications_courses', $course );
+		return $DB->insert_record( 'block_notifications_courses', $course );
 	}
 
 	function update_last_notification_time( $course_id, $last_notification_time ) {
@@ -43,7 +43,7 @@ class Course {
 		$course->course_id = $course_id;
 		$course->last_notification_time = $last_notification_time;
 
-		return $DB->update_record( 'block_moodle_notifications_courses', $course );
+		return $DB->update_record( 'block_notifications_courses', $course );
 	}
 
 	function update_course_notification_settings( $course_id, $settings ) {
@@ -73,14 +73,15 @@ class Course {
 		$course->sms_notification_preset = 0;
 		if( isset($settings->sms_notification_preset) and $settings->sms_notification_preset == 1 ) { $course->sms_notification_preset = 1; }
 
-		return $DB->update_record('block_moodle_notifications_courses', $course);
+		return $DB->update_record('block_notifications_courses', $course);
 	}
 
 	function is_registered( $course_id ) {
-		$course_registration = $this->get_registration_id( $course_id ); 
+		$course_registration = $this->get_registration_id( $course_id );
 		if( !is_null($course_registration) ) {
 			return true;
 		} else {
+            die ('L= '.__LINE__);
 			return false;
 		}
 	}
@@ -88,27 +89,29 @@ class Course {
 	function get_registration_id( $course_id ){
 		$course_registration = $this->get_registration($course_id);
 		if( is_null($course_registration) ) {
+            die ('L= '.__LINE__);
 			return null;
 		} else {
 			return $course_registration->id;
 		}
 	}
-	
+
 	function get_registration( $course_id ){
 		global $DB;
 
-		$course_registration = $DB->get_records_select( 'block_moodle_notifications_courses', "course_id=$course_id" ); 
+		$course_registration = $DB->get_records_select( 'block_notifications_courses', "course_id=$course_id" );
 		if( isset($course_registration) and is_array($course_registration) and !empty($course_registration)  ) {
 			return current($course_registration);
 		} else {
+            die ('L= '.__LINE__);
 			return null;
 		}
 	}
-	
+
 	function get_last_notification_time( $course_id ) {
 		global $DB;
-	
-		$course_registration = $DB->get_records_select( 'block_moodle_notifications_courses', "course_id=$course_id" ); 
+
+		$course_registration = $DB->get_records_select( 'block_notifications_courses', "course_id=$course_id" );
 		if( isset($course_registration) and is_array($course_registration)  and !empty($course_registration) ) {
 			return current($course_registration)->last_notification_time;
 		} else {
@@ -116,11 +119,12 @@ class Course {
 		}
 	}
 
-	function uses_moodle_notifications_block( $course_id ) {
+	function uses_notifications_block( $course_id ) {
 		global $DB, $CFG;
 
-		$id = $DB->get_records_sql( "select instanceid from {$CFG->prefix}context where id in (select parentcontextid from {$CFG->prefix}block_instances where blockname = 'moodle_notifications') and instanceid = $course_id" );
+		$id = $DB->get_records_sql( "select instanceid from {$CFG->prefix}context where id in (select parentcontextid from {$CFG->prefix}block_instances where blockname = 'notifications') and instanceid = $course_id" );
 		if( empty($id) ) {
+            die ('L= '.__LINE__);
 			return false;
 		} else {
 			return true;
@@ -128,16 +132,16 @@ class Course {
 	}
 
 
-	function get_all_courses_using_moodle_notifications_block() {
+	function get_all_courses_using_notifications_block() {
 		global $DB, $CFG;
 
 		// join block_instances, context and course and extract all courses
-		// that are using moodle_notifications block
-		return $DB->get_records_sql( " select * from {$CFG->prefix}course where id in 
-											( select instanceid from {$CFG->prefix}context where id in 
-												( select parentcontextid from {$CFG->prefix}block_instances where blockname = 'moodle_notifications' ) );" );
+		// that are using notifications block
+		return $DB->get_records_sql( " select * from {$CFG->prefix}course where id in
+											( select instanceid from {$CFG->prefix}context where id in
+												( select parentcontextid from {$CFG->prefix}block_instances where blockname = 'notifications' ) );" );
 	}
-	
+
 	function get_updated_and_deleted_modules( $course_id ){
 		global $DB;
 
@@ -153,12 +157,12 @@ class Course {
 		$modinfo =& get_fast_modinfo($course);
 		foreach($modinfo->cms as $cms => $module) {
 			// skip labels, invisible modules and logged modules
-			
-			if( 
-				$module->modname == 'label' or 
-				$module->visible == 0 or 
+
+			if(
+				$module->modname == 'label' or
+				$module->visible == 0 or
 				( $module->available != 1 and $module->showavailability == 0 ) or
-				$this->is_module_logged($course->id, $module->id, $module->modname) 
+				$this->is_module_logged($course->id, $module->id, $module->modname)
 			) {
 				continue;
 			}
@@ -171,12 +175,12 @@ class Course {
 			$new_record->action = 'added';
 			$new_record->status = 'pending';
 
-			$DB->insert_record( 'block_moodle_notifications_log', $new_record );
+			$DB->insert_record( 'block_notifications_log', $new_record );
 		}
 		// update records
 		$course_updates = $this->get_updated_and_deleted_modules( $course->id );
 
-		// if no course updates available then return 
+		// if no course updates available then return
 		if( empty($course_updates) ) return;
 
 		foreach($course_updates as $course_update) {
@@ -200,10 +204,10 @@ class Course {
 					$new_record->action = 'deleted';
 				}
 
-				$DB->insert_record( 'block_moodle_notifications_log', $new_record );
+				$DB->insert_record( 'block_notifications_log', $new_record );
 			}
 		}
-		
+
 	}
 
 	function initialize_log( $course ){
@@ -211,13 +215,13 @@ class Course {
 
 		$modinfo =& get_fast_modinfo( $course );
 		// drop all previous records
-		$DB->delete_records( 'block_moodle_notifications_log', array('course_id'=>$course->id)  );
+		$DB->delete_records( 'block_notifications_log', array('course_id'=>$course->id)  );
 		// add new records
 		foreach( $modinfo->cms as $cms => $module ) {
 			// filter labels and invisible modules
-			if( 
-				$module->modname == 'label' or 
-				$module->visible == 0 or 
+			if(
+				$module->modname == 'label' or
+				$module->visible == 0 or
 				( $module->available != 1 and $module->showavailability == 0 )
 			) {
 				continue; }
@@ -229,15 +233,15 @@ class Course {
 			$new_record->type = $module->modname;
 			$new_record->action = 'added';
 			$new_record->status = 'notified';
-			
-			$DB->insert_record( 'block_moodle_notifications_log', $new_record );
+
+			$DB->insert_record( 'block_notifications_log', $new_record );
 		}
 	}
 
 	function is_module_logged( $course_id, $module_id, $type ){
 		global $DB;
 
-		$log = $DB->get_records_select( 'block_moodle_notifications_log', "course_id = $course_id AND module_id = $module_id AND type = '$type'", null,'id' );
+		$log = $DB->get_records_select( 'block_notifications_log', "course_id = $course_id AND module_id = $module_id AND type = '$type'", null,'id' );
 		if(empty($log)) {
 			return false;
 		} else {
@@ -248,7 +252,7 @@ class Course {
 	function log_exists( $course_id ){
 		global $DB;
 
-		$log = $DB->get_records_select('block_moodle_notifications_log', "course_id = $course_id", null,'id');
+		$log = $DB->get_records_select('block_notifications_log', "course_id = $course_id", null,'id');
 		if(empty($log)) {
 			return false;
 		} else {
@@ -259,9 +263,9 @@ class Course {
 	function get_log_entry( $module_id ){
 		global $DB;
 
-		$entry = $DB->get_records_select( 'block_moodle_notifications_log', "module_id = $module_id" );
+		$entry = $DB->get_records_select( 'block_notifications_log', "module_id = $module_id" );
 		if ( empty($entry) ) {
-			return null;	
+			return null;
 		} else {
 			return  current( $entry );
 		}
@@ -269,9 +273,9 @@ class Course {
 
 	function get_logs( $course_id, $limit ){
 		global $DB, $CFG;
-		$entries = $DB->get_records_sql( "select * from {$CFG->prefix}block_moodle_notifications_log where course_id=$course_id order by id desc limit $limit" );
+		$entries = $DB->get_records_sql( "select * from {$CFG->prefix}block_notifications_log where course_id=$course_id order by id desc limit $limit" );
 		if ( empty($entries) ) {
-			return null;	
+			return null;
 		} else {
 			return $entries;
 		}
@@ -280,35 +284,35 @@ class Course {
 	function get_recent_activities( $course_id ){
 		global $DB, $CFG;
 
-		//block_moodle_notifications_log table plus visible field from course_modules
-		$subtable = "( select {$CFG->prefix}block_moodle_notifications_log.*, {$CFG->prefix}course_modules.visible 
-						from {$CFG->prefix}block_moodle_notifications_log left join {$CFG->prefix}course_modules 
-							on ({$CFG->prefix}block_moodle_notifications_log.module_id = {$CFG->prefix}course_modules.id) ) logs_with_visibility";
+		//block_notifications_log table plus visible field from course_modules
+		$subtable = "( select {$CFG->prefix}block_notifications_log.*, {$CFG->prefix}course_modules.visible
+						from {$CFG->prefix}block_notifications_log left join {$CFG->prefix}course_modules
+							on ({$CFG->prefix}block_notifications_log.module_id = {$CFG->prefix}course_modules.id) ) logs_with_visibility";
 		// select all modules that are visible and whose status is pending
 		$recent_activities = $DB->get_records_sql( "select * from $subtable where course_id = $course_id and status='pending' and (visible = 1 or visible is null)" );
 		//print_r($recent_activities);
 		// clear all pending notifications
 		if(!empty($recent_activities))
-			$DB->execute( "update {$CFG->prefix}block_moodle_notifications_log set status = 'notified' 
-								where 
-									course_id = $course_id and status='pending' 
+			$DB->execute( "update {$CFG->prefix}block_notifications_log set status = 'notified'
+								where
+									course_id = $course_id and status='pending'
 									and id in ( select id from $subtable where course_id = $course_id and (visible = 1 or visible is null) )" );
 		return $recent_activities;
 	}
 
-	function get_course_info( $course_id ) { 
+	function get_course_info( $course_id ) {
 		global $CFG, $DB;
 
 		return current( $DB->get_records_sql("select fullname, summary from {$CFG->prefix}course where id = $course_id") );
 	}
-	
+
 	// purge entries of courses that have been deleted
 	function collect_garbage(){
 		global $CFG, $DB;
 
 		$course_list = "(select id from {$CFG->prefix}course)";
-		$DB->execute( "delete from {$CFG->prefix}block_moodle_notifications_courses where course_id not in $course_list" );	
-		$DB->execute( "delete from {$CFG->prefix}block_moodle_notifications_log where course_id not in $course_list" );	
+		$DB->execute( "delete from {$CFG->prefix}block_notifications_courses where course_id not in $course_list" );
+		$DB->execute( "delete from {$CFG->prefix}block_notifications_log where course_id not in $course_list" );
 	}
 
 }

@@ -1,24 +1,25 @@
-<?php 
+<?php
 include_once realpath(dirname( __FILE__ ).DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR."common.php";
 include_once LIB_DIR."Course.php";
 include_once LIB_DIR."User.php";
 
 class RSS {
 	function __construct( $course_id ){
-		global $CFG, $DB;	
-		
+		global $CFG, $DB;
+
 		$Course = new Course();
 		// if the course is not registered or
 		// the course is registered but the block is not active
-		//if( !$Course->is_registered($course_id) or !$Course->uses_moodle_notifications_block($course_id) ) {
-		if( !$Course->is_registered($course_id) or !$Course->uses_moodle_notifications_block($course_id) ) {
-			echo get_string('rss_not_enabled', 'block_moodle_notifications');
+		//if( !$Course->is_registered($course_id) or !$Course->uses_notifications_block($course_id) ) {
+		if( !$Course->is_registered($course_id) or !$Course->uses_notifications_block($course_id) ) {
+			echo get_string('rss_not_enabled', 'block_notifications');
 			return;
 		}
 		$User = new User();
 		$teacher = $User->get_professor( $course_id );
 		// if no teacher then add a dummy mail address
 		if( empty($teacher) ) {
+            $teacher = new stdClass();
 			$teacher->email = "noteacher@inthiscourse.org";
 		}
 
@@ -50,13 +51,13 @@ class RSS {
 
 		if( !isset($logs) or !is_array($logs) or count($logs) == 0 ) {
 			$output .= "<item>";
-			$output .= '<title>'.get_string('rss_empty_title', 'block_moodle_notifications').'</title>';
-			$output .= '<description>'.get_string('rss_empty_description', 'block_moodle_notifications').'</description>';
+			$output .= '<title>'.get_string('rss_empty_title', 'block_notifications').'</title>';
+			$output .= '<description>'.get_string('rss_empty_description', 'block_notifications').'</description>';
 			$output .= "</item>";
 		} else {
 			foreach( $logs as $log ) {
 				$output .= "<item>";
-				$output .= '<title>'.get_string($log->type, 'block_moodle_notifications').'</title>';
+				$output .= '<title>'.get_string($log->type, 'block_notifications').'</title>';
 				if($log->action == 'deleted')
 					$output .= "<link></link>";
 				else
@@ -64,17 +65,17 @@ class RSS {
 
 				$output .= "<description>";
 				switch( $log->action ) {
-					case 'added':	
-						$output .= get_string('added', 'block_moodle_notifications').' ';
+					case 'added':
+						$output .= get_string('added', 'block_notifications').' ';
 						break;
-					case 'updated':	
-						$output .= get_string('updated', 'block_moodle_notifications').' ';
+					case 'updated':
+						$output .= get_string('updated', 'block_notifications').' ';
 						break;
-					case 'deleted':	
-						$output .= get_string('deleted', 'block_moodle_notifications').' ';
+					case 'deleted':
+						$output .= get_string('deleted', 'block_notifications').' ';
 						break;
 				}
-				$output .= get_string( $log->type, 'block_moodle_notifications' ).': ';
+				$output .= get_string( $log->type, 'block_notifications' ).': ';
 				$output .= $log->name;
 				$output .= "</description>";
 				$output .= "</item>";
